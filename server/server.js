@@ -24,11 +24,25 @@ app.use("/api/export", exportRoutes);
 
 socket.init(server);
 
-// Route sederhana untuk pengecekan
+// =====================================
+// Route Root
+// =====================================
+
 app.get("/", (req, res) => {
   res.json({
     success: true,
     message: "Backend Sistem Peringatan Dini Longsor berjalan 🚀",
+  });
+});
+
+// =====================================
+// Route Test
+// =====================================
+
+app.get("/test", (req, res) => {
+  res.json({
+    success: true,
+    message: "Railway OK",
   });
 });
 

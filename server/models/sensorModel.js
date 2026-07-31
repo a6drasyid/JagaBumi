@@ -16,9 +16,9 @@ const Sensor = {
       tilt_fuzzy,
       fuzzy_value,
       status,
-      DATE_ADD(created_at, INTERVAL 8 HOUR) AS created_at
+      created_at
     FROM sensor_data
-    WHERE DATE(DATE_ADD(created_at, INTERVAL 8 HOUR)) = CURDATE()
+    WHERE DATE(created_at) = CURDATE()
     ORDER BY created_at DESC
     LIMIT 1
   `;
@@ -39,7 +39,7 @@ const Sensor = {
       case "1h":
         sql = `
           SELECT
-    DATE_ADD(created_at, INTERVAL 8 HOUR) AS created_at,
+    created_at,
     rain,
     rain_fuzzy,
     soil,
@@ -57,7 +57,7 @@ const Sensor = {
       case "1d":
         sql = `
     SELECT
-    DATE_ADD(created_at, INTERVAL 8 HOUR) AS created_at,
+    created_at,
     rain,
     rain_fuzzy,
     soil,
@@ -78,7 +78,7 @@ const Sensor = {
       default:
         sql = `
           SELECT
-    DATE_ADD(created_at, INTERVAL 8 HOUR) AS created_at,
+    created_at,
     rain,
     rain_fuzzy,
     soil,
@@ -99,7 +99,7 @@ const Sensor = {
   getHistoryByDate(start, end, callback) {
     const sql = `
     SELECT
-     DATE_ADD(created_at, INTERVAL 8 HOUR) AS created_at,
+    created_at,
     rain,
     rain_fuzzy,
     soil,
@@ -122,7 +122,7 @@ const Sensor = {
     const sql = `
    SELECT
     id,
-    DATE_ADD(created_at, INTERVAL 8 HOUR) AS created_at,
+    created_at,
     rain,
     rain_fuzzy,
     soil,
@@ -146,7 +146,7 @@ LIMIT 20
     const sql = `
     SELECT
       id,
-      DATE_ADD(created_at, INTERVAL 8 HOUR) AS created_at,
+      created_at,
       rain,
       rain_fuzzy,
       soil,
@@ -295,7 +295,7 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   getExportData(start, end, callback) {
     let sql = `
     SELECT
-    DATE_ADD(created_at, INTERVAL 8 HOUR) AS created_at,
+    created_at,
     rain,
     rain_fuzzy,
     soil,

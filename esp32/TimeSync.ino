@@ -1,0 +1,90 @@
+#include <time.h>
+
+void initTime()
+{
+    Serial.println();
+    Serial.println("================================");
+    Serial.println("Sinkronisasi Waktu (NTP)");
+
+    configTime(GMT_OFFSET_SEC, DAYLIGHT_OFFSET_SEC, NTP_SERVER);
+
+    struct tm timeinfo;
+
+    while (!getLocalTime(&timeinfo))
+    {
+        Serial.print(".");
+        delay(500);
+    }
+
+    currentDay = timeinfo.tm_mday;
+
+    Serial.println();
+    Serial.println("Sinkronisasi berhasil");
+
+    Serial.print("Tanggal : ");
+    Serial.println(timeinfo.tm_mday);
+
+    Serial.print("Bulan   : ");
+    Serial.println(timeinfo.tm_mon + 1);
+
+    Serial.print("Tahun   : ");
+    Serial.println(timeinfo.tm_year + 1900);
+
+    Serial.println("================================");
+}
+
+void checkNewDay()
+{
+    // Cek setiap 1 menit
+    if (millis() - lastTimeCheck < 60000)
+        return;
+
+    lastTimeCheck = millis();
+
+    struct tm timeinfo;
+
+    if (!getLocalTime(&timeinfo))
+        return;
+
+    Serial.println();
+Serial.println("===== CHECK NEW DAY =====");
+
+Serial.print("currentDay : ");
+Serial.println(currentDay);
+
+Serial.print("tm_mday    : ");
+Serial.println(timeinfo.tm_mday);
+
+    // Tampilkan tanggal saat ini (untuk debug)
+    Serial.printf(
+        "Tanggal sekarang : %02d-%02d-%04d\n",
+        timeinfo.tm_mday,
+        timeinfo.tm_mon + 1,
+        timeinfo.tm_year + 1900
+    );
+
+    if (timeinfo.tm_mday != currentDay)
+{
+    currentDay = timeinfo.tm_mday;
+
+    noInterrupts();
+
+    rainTip = 0;
+    rainMM = 0;
+
+    interrupts();
+
+    sendToServer();
+
+    Serial.println();
+    Serial.println("================================");
+    Serial.printf(
+        "Hari berganti : %02d-%02d-%04d\n",
+        timeinfo.tm_mday,
+        timeinfo.tm_mon + 1,
+        timeinfo.tm_year + 1900
+    );
+    Serial.println("Curah hujan direset");
+    Serial.println("================================");
+}
+}

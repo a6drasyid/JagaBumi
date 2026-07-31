@@ -1,9 +1,9 @@
-import { SensorProvider } from "./context/SensorContext";
+import "leaflet/dist/leaflet.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./index.css";
-import "leaflet/dist/leaflet.css";
 import App from "./App";
+import { SensorProvider } from "./context/SensorContext";
+import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

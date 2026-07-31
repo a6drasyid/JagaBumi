@@ -24,16 +24,24 @@ sensorController.getLatest = (req, res) => {
       return res.json({
         rain_tip: 0,
         rain: 0,
+
+        soil: null,
+        soil_fuzzy: null,
+
+        tilt: null,
+        tilt_fuzzy: null,
+
+        fuzzy_value: null,
+        status: null,
+
+        created_at: null,
       });
     }
 
     // =====================================
     // ADA DATA HARI INI
     // =====================================
-    return res.json({
-      rain_tip: result[0].rain_tip,
-      rain: Number(result[0].rain),
-    });
+    return res.json(result[0]);
   });
 };
 

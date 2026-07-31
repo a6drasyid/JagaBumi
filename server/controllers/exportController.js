@@ -82,7 +82,10 @@ const exportController = {
         const lastStatus = totalData > 0 ? result[result.length - 1].status : "-";
 
         worksheet.getCell("A3").value = "Tanggal Export";
-        worksheet.getCell("B3").value = new Date().toLocaleString("id-ID");
+        worksheet.getCell("B3").value = new Date().toLocaleString("id-ID", {
+          timeZone: "Asia/Makassar",
+          hour12: false,
+        });
 
         worksheet.getCell("A4").value = "Filter";
 
@@ -164,7 +167,10 @@ const exportController = {
         // DATA
         // =====================================
         result.forEach((item, index) => {
-          const formattedDate = new Date(item.created_at).toLocaleString("id-ID");
+          const formattedDate = new Date(item.created_at).toLocaleString("id-ID", {
+            timeZone: "Asia/Makassar",
+            hour12: false,
+          });
 
           worksheet.insertRow(14 + index, [
             index + 1,
@@ -382,7 +388,12 @@ const exportController = {
         // =====================================
         doc.font("Helvetica").fontSize(11);
 
-        doc.text(`Tanggal Export : ${new Date().toLocaleString("id-ID")}`);
+        doc.text(
+          `Tanggal Export : ${new Date().toLocaleString("id-ID", {
+            timeZone: "Asia/Makassar",
+            hour12: false,
+          })}`
+        );
 
         doc.text(`Filter : ${start && end ? `${start} s/d ${end}` : "Semua Data"}`);
 
@@ -493,10 +504,18 @@ const exportController = {
 
           x += col.no;
 
-          doc.text(new Date(item.created_at).toLocaleString("id-ID"), x, y + 7, {
-            width: col.tanggal,
-            align: "center",
-          });
+          doc.text(
+            new Date(item.created_at).toLocaleString("id-ID", {
+              timeZone: "Asia/Makassar",
+              hour12: false,
+            }),
+            x,
+            y + 7,
+            {
+              width: col.tanggal,
+              align: "center",
+            }
+          );
 
           x += col.tanggal;
 

@@ -52,7 +52,7 @@ const bool ENABLE_BUZZER = true;
 // false = menggunakan sensor asli
 // true  = menggunakan input manual
 
-const bool TEST_MODE = true;
+const bool TEST_MODE = false;
 
 //=====================================================
 // MANUAL INPUT

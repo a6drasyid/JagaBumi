@@ -1,5 +1,12 @@
 const db = require("../config/database");
 
+function getCurrentWITATime() {
+  const now = new Date();
+  now.setHours(now.getHours() + 8);
+
+  return now.toISOString().slice(0, 19).replace("T", " ");
+}
+
 const Sensor = {
   // =====================================
   // DATA TERBARU
@@ -196,6 +203,7 @@ LIMIT 20
   // SIMPAN DATA SENSOR
   // =====================================
   create(data, callback) {
+    const created_at = getCurrentWITATime();
     const sql = `
       INSERT INTO sensor_data
 (
@@ -207,27 +215,25 @@ LIMIT 20
     tilt,
     tilt_fuzzy,
     fuzzy_value,
-    status
+    status,
+    created_at
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     db.query(
       sql,
       [
         data.rain_tip,
-
         data.rain,
         data.rain_fuzzy,
-
         data.soil,
         data.soil_fuzzy,
-
         data.tilt,
         data.tilt_fuzzy,
-
         data.fuzzy_value,
         data.status,
+        created_at,
       ],
       callback
     );
@@ -237,6 +243,7 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   // SIMPAN DATA SENSOR (PROMISE)
   // =====================================
   createAsync(data) {
+    const created_at = getCurrentWITATime();
     return new Promise((resolve, reject) => {
       const sql = `
       INSERT INTO sensor_data
@@ -249,7 +256,8 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     tilt,
     tilt_fuzzy,
     fuzzy_value,
-    status
+    status,
+    created_at
 )
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
@@ -258,18 +266,15 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         sql,
         [
           data.rain_tip,
-
           data.rain,
           data.rain_fuzzy,
-
           data.soil,
           data.soil_fuzzy,
-
           data.tilt,
           data.tilt_fuzzy,
-
           data.fuzzy_value,
           data.status,
+          created_at,
         ],
         (err, result) => {
           if (err) {

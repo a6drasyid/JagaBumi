@@ -381,7 +381,7 @@ export default function RealtimeChart() {
 
   const handleExportExcel = async () => {
     try {
-      let url = "http://localhost:3000/api/export/excel";
+      let url = "https://jagabumi.up.railway.app/api/export/excel";
 
       if (range === "custom" && draftStartDate && draftEndDate) {
         url += `?start=${draftStartDate}&end=${draftEndDate}`;
@@ -419,7 +419,7 @@ export default function RealtimeChart() {
 
   const handleExportPDF = async () => {
     try {
-      let url = "http://localhost:3000/api/export/pdf";
+      let url = "https://jagabumi.up.railway.app/api/export/pdf";
 
       if (range === "custom" && draftStartDate && draftEndDate) {
         url += `?start=${draftStartDate}&end=${draftEndDate}`;

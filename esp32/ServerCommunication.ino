@@ -56,43 +56,49 @@ void sendToServer()
 
     http.addHeader("Content-Type", "application/json");
 
+    // Ambil waktu dari NTP
+    String dateTime = getDateTime();
+
     String json = "{";
 
-json += "\"rain_tip\":" + String(rainTip);
+    json += "\"rain_tip\":" + String(rainTip);
 
-json += ",";
+    json += ",";
 
-json += "\"rain\":" + String(rainMM, 1);
-json += ",";
-json += "\"rain_fuzzy\":\"" + rainFuzzy + "\"";
+    json += "\"rain\":" + String(rainMM, 1);
+    json += ",";
+    json += "\"rain_fuzzy\":\"" + rainFuzzy + "\"";
 
-json += ",";
-json += "\"soil\":" + String(soilPercent);
-json += ",";
-json += "\"soil_fuzzy\":\"" + soilFuzzy + "\"";
+    json += ",";
+    json += "\"soil\":" + String(soilPercent);
+    json += ",";
+    json += "\"soil_fuzzy\":\"" + soilFuzzy + "\"";
 
-json += ",";
-json += "\"tilt\":" + String(tilt, 1);
-json += ",";
-json += "\"tilt_fuzzy\":\"" + tiltFuzzy + "\"";
+    json += ",";
+    json += "\"tilt\":" + String(tilt, 1);
+    json += ",";
+    json += "\"tilt_fuzzy\":\"" + tiltFuzzy + "\"";
 
-json += ",";
-json += "\"fuzzy_value\":" + String(fuzzyOutput, 1);
+    json += ",";
+    json += "\"fuzzy_value\":" + String(fuzzyOutput, 1);
 
-json += ",";
-json += "\"status\":\"" + status + "\"";
+    json += ",";
+    json += "\"status\":\"" + status + "\"";
 
-json += "}";
+    // Tambahkan waktu dari ESP32
+    json += ",";
+    json += "\"created_at\":\"" + dateTime + "\"";
 
-    int httpCode = http.POST(json);
+    json += "}";
 
     Serial.println("================================");
     Serial.println("SEND TO SERVER");
+    Serial.println(json);
+
+    int httpCode = http.POST(json);
 
     Serial.print("HTTP Code : ");
     Serial.println(httpCode);
-
-    Serial.println(json);
 
     if (httpCode > 0)
     {

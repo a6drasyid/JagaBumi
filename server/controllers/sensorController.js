@@ -175,6 +175,8 @@ sensorController.create = async (req, res) => {
 
       fuzzy_value,
       status,
+
+      created_at,
     } = req.body;
 
     // =============================
@@ -190,7 +192,8 @@ sensorController.create = async (req, res) => {
       tilt === undefined ||
       !tilt_fuzzy ||
       fuzzy_value === undefined ||
-      !status
+      !status ||
+      !created_at
     ) {
       return res.status(400).json({
         success: false,
@@ -293,6 +296,8 @@ Segera:
 
       fuzzy_value,
       status,
+
+      created_at,
     });
 
     // =============================

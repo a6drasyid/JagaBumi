@@ -214,9 +214,10 @@ LIMIT 20
     tilt,
     tilt_fuzzy,
     fuzzy_value,
-    status
+    status,
+    created_at
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     db.query(
@@ -235,6 +236,8 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 
         data.fuzzy_value,
         data.status,
+
+        data.created_at,
       ],
       callback
     );
@@ -256,9 +259,10 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     tilt,
     tilt_fuzzy,
     fuzzy_value,
-    status
+    status,
+    created_at
 )
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
       db.query(
@@ -277,6 +281,8 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 
           data.fuzzy_value,
           data.status,
+
+          data.created_at,
         ],
         (err, result) => {
           if (err) {

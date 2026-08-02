@@ -7,16 +7,8 @@ const sensorController = {};
 // =========================================
 // GET DATA TERBARU
 // =========================================
-
 sensorController.getLatest = (req, res) => {
   const { date } = req.query;
-
-  if (!date) {
-    return res.status(400).json({
-      success: false,
-      message: "Parameter date wajib diisi.",
-    });
-  }
 
   Sensor.getLatest(date, (err, result) => {
     if (err) {
@@ -30,16 +22,13 @@ sensorController.getLatest = (req, res) => {
       return res.json({
         rain_tip: 0,
         rain: 0,
-
+        rain_fuzzy: null,
         soil: null,
         soil_fuzzy: null,
-
         tilt: null,
         tilt_fuzzy: null,
-
         fuzzy_value: null,
         status: null,
-
         created_at: null,
       });
     }

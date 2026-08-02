@@ -9,7 +9,16 @@ const sensorController = {};
 // =========================================
 
 sensorController.getLatest = (req, res) => {
-  Sensor.getLatest((err, result) => {
+  const { date } = req.query;
+
+  if (!date) {
+    return res.status(400).json({
+      success: false,
+      message: "Parameter date wajib diisi.",
+    });
+  }
+
+  Sensor.getLatest(date, (err, result) => {
     if (err) {
       return res.status(500).json({
         success: false,
@@ -17,9 +26,6 @@ sensorController.getLatest = (req, res) => {
       });
     }
 
-    // =====================================
-    // BELUM ADA DATA HARI INI
-    // =====================================
     if (result.length === 0) {
       return res.json({
         rain_tip: 0,
@@ -38,9 +44,6 @@ sensorController.getLatest = (req, res) => {
       });
     }
 
-    // =====================================
-    // ADA DATA HARI INI
-    // =====================================
     return res.json(result[0]);
   });
 };

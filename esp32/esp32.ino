@@ -19,6 +19,8 @@ volatile long rainTip = 0;
 volatile unsigned long lastRainInterrupt = 0;
 
 float rainMM = 0;
+float rainBaseMM = 0;
+
 
 int soilADC = 0;
 int soilPercent = 0;
@@ -31,7 +33,7 @@ unsigned long lastLCD = 0;
 unsigned long lastSerial = 0;
 unsigned long lastServer = 0;
 
-bool lcdPage = false;
+// bool lcdPage = false;
 int currentDay = -1;
 unsigned long lastTimeCheck = 0;
 
@@ -42,40 +44,59 @@ void setup()
     Serial.begin(115200);
 
     Wire.begin(SDA_PIN, SCL_PIN);
- loadLatestRain();
+
+    initLCD();
+
+    showWiFiConnecting();
+
+    connectWiFi();
+
+    if (WiFi.status() == WL_CONNECTED)
+    {
+        showWiFiConnected();
+    }
+    else
+    {
+        displayLCD(
+            "WiFi",
+            "Tidak Terhubung"
+        );
+
+        delay(1500);
+    }
 
     initRainGauge();
+    showRainGaugeOK();
+
+    displayLCD(
+        "Sensor Tanah",
+        "OK"
+    );
+    delay(1500);
+
     initMPU();
-    initLCD();
+    showMPU6050OK();
+
     setupBuzzer();
 
-    //=========================
-    // WiFi
-    //=========================
+    initTime();
 
-   connectWiFi();
-   initTime();
+    loadLatestRain();
 
-// // TEST
-// currentDay--;
+    showSystemReady();
 
-// Ambil data hujan terakhir dari server
-loadLatestRain();
-
-Serial.println();
-Serial.println("=======================================");
+    Serial.println();
+    Serial.println("=======================================");
     Serial.println(" LANDSLIDE EWS READY ");
     Serial.println("=======================================");
 }
 
+
 void loop()
 {
     checkNewDay();
-    unsigned long now = millis();
 
-    //---------------------------------------
-    // UPDATE SENSOR
-    //---------------------------------------
+    unsigned long now = millis();
 
     if (now - lastSensor >= SENSOR_INTERVAL)
     {
@@ -86,24 +107,10 @@ void loop()
         readMPU();
 
         updateFuzzyInput();
-
         fuzzyInference();
     }
 
-    //---------------------------------------
-    // UPDATE LCD
-    //---------------------------------------
-
-    if (now - lastLCD >= LCD_INTERVAL)
-    {
-        lastLCD = now;
-
-        updateLCD();
-    }
-
-    //---------------------------------------
-    // UPDATE SERIAL
-    //---------------------------------------
+    updateLCD();
 
     if (now - lastSerial >= SERIAL_INTERVAL)
     {
@@ -112,22 +119,13 @@ void loop()
         printSerial();
     }
 
-    //---------------------------------------
-    // UPDATE BUZZER
-    //---------------------------------------
-
     updateBuzzer();
-
-    //---------------------------------------
-    // SEND DATA KE WEBSITE
-    //---------------------------------------
 
     if (now - lastServer >= SERVER_INTERVAL)
     {
         lastServer = now;
 
         reconnectWiFi();
-
         sendToServer();
     }
 }

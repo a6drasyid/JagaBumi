@@ -4,7 +4,7 @@ const Sensor = {
   // =====================================
   // DATA TERBARU
   // =====================================
-  getLatest(callback) {
+  getLatest(date, callback) {
     const sql = `
     SELECT
       rain_tip,
@@ -18,12 +18,12 @@ const Sensor = {
       status,
       created_at
     FROM sensor_data
-    WHERE DATE(created_at) = CURDATE()
+    WHERE DATE(created_at) = ?
     ORDER BY created_at DESC
     LIMIT 1
   `;
 
-    db.query(sql, callback);
+    db.query(sql, [date], callback);
   },
 
   // =====================================

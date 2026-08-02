@@ -1,0 +1,18 @@
+TY  - JOUR
+AU  - Mandala Putra, Hadian
+AU  - 'Alimuddin, 
+AU  - Suhartini, 
+AU  - Wahyu Rizki, 
+PY  - 2025/01/20
+Y2  - 2026/08/02
+TI  - Pengembangan Sistem untuk Deteksi dan Identifikasi Lokasi Kecelakaan pada Lansia sebagai Bentuk Peningkatan Keselamatan berbasis Internet of Things (IoT)
+JF  - Infotek: Jurnal Informatika dan Teknologi
+JA  - INFOTEK
+VL  - 8
+IS  - 1
+SE  - Articles
+DO  - 10.29408/jit.v8i1.28263
+UR  - https://e-journal.hamzanwadi.ac.id/index.php/infotek/article/view/28263
+SP  - 205-216
+AB  - &lt;p style=&quot;text-align: justify; margin: 0cm 28.3pt 0cm 1.0cm;&quot;&gt;&lt;em&gt;fainting, which can be fatal to their health and quality of life. The elderly population in Indonesia continues to increase, creating an urgent need for technological solutions to effectively monitor their health conditions. This study aims to design and develop an Internet of Things (IoT)-based accident detection and identification system for the elderly. The system utilizes several sensors, including an accelerometer, pulse sensor, and GPS, to monitor the physical conditions of the elderly and track their location in real-time. The research method employed is the Research and Development (R&amp;amp;D) method. Testing was conducted on a non-elderly subject by simulating falls with several scenarios, repeated multiple times. When the sensors detect an accident, the system automatically sends notifications to the user’s or the elderly family’s smartphone, enabling quick actions that can prevent further impacts. The results showed that the system achieved a detection accuracy rate of 91% in identifying falls and weak pulse conditions out of 30 test trials&lt;/em&gt;&lt;/p&gt;
+ER  -

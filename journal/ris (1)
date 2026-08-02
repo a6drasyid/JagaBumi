@@ -1,0 +1,18 @@
+TY  - JOUR
+AU  - Gunawan, Indra
+AU  - Wathani, M Nurul
+AU  - Zulkipli, 
+AU  - Sappatin, 
+PY  - 2026/07/21
+Y2  - 2026/08/02
+TI  - Pengembangan Web Dashboard Monitoring Kadar Nitrogen, Fosfat, Kalium (NPK), PH Tanah Berbasis Artificial Intelegence (AI) dan Internet Of Things (IoT)
+JF  - Infotek: Jurnal Informatika dan Teknologi
+JA  - INFOTEK
+VL  - 9
+IS  - 2
+SE  - Articles
+DO  - 10.29408/jit.v9i2.34982
+UR  - https://e-journal.hamzanwadi.ac.id/index.php/infotek/article/view/34982
+SP  - 491-501
+AB  - &lt;p&gt;&lt;em&gt;Indonesia is an agrarian country where the agricultural sector plays an important role in supporting the national economy. However, agricultural land management is still largely carried out using conventional methods, resulting in suboptimal monitoring of soil nutrient conditions. Nitrogen (N), Phosphorus (P), Potassium (K), and soil acidity (pH) are critical parameters influencing soil fertility and crop productivity. This study aims to develop a soil monitoring system for NPK and pH levels based on Artificial Intelligence (AI) and the Internet of Things (IoT) using an NPK Modbus sensor, an analog soil pH sensor, and an ESP32 microcontroller. Sensor data are transmitted in real-time to a Firebase database via a Wi-Fi network and displayed on a web dashboard through numerical visualizations, graphs, and ChatGPT-based AI analytic interpretations. The experimental results show that the system successfully acquires and transmits soil condition data consistently. Accuracy testing demonstrated that the system is highly precise, with the pH sensor readings showing an average difference (error rate) of only 0.2% when compared to a standard pH tester. The NPK sensor also exhibited excellent reactivity to changes in soil macronutrients. Furthermore, the integrated AI system successfully provided stable fertility evaluations and fertilization recommendations across multiple repeated tests. This system is expected to facilitate remote field monitoring for farmers and support precise, efficient fertilization decision-making.&lt;/em&gt;&lt;/p&gt;
+ER  -

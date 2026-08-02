@@ -1,0 +1,18 @@
+TY  - JOUR
+AU  - Indra Gunawan, 
+AU  - Muhamad Sadali, 
+AU  - Hamzan Ahmadi, 
+AU  - Jumawal, 
+PY  - 2025/01/20
+Y2  - 2026/08/02
+TI  - Perancangan Aplikasi KWH Meter Dan Sistem Monitoring Konsumsi Listrik Berbasis Internet Of Things Untuk Kamar Kos-Kosan
+JF  - Infotek: Jurnal Informatika dan Teknologi
+JA  - INFOTEK
+VL  - 8
+IS  - 1
+SE  - Articles
+DO  - 10.29408/jit.v8i1.28046
+UR  - https://e-journal.hamzanwadi.ac.id/index.php/infotek/article/view/28046
+SP  - 261-270
+AB  - &lt;p&gt;&lt;em&gt;The use of electrical energy in boarding houses is currently quite important for the residents. However, in its use there are often problems related to fees between boarding house residents which are within 1 KWH Meter, needs between boarding house residents with unequal electricity usage and bill information can be monitored by boarding house owners. Therefore, we need a system that can monitor and calculate the cost of electricity usage in boarding houses in real-time. This research aims to develop a digital KWH meter application design and IoT (Internet of Things) based electrical energy consumption information using ESP8266, PZEM sensors, web server. The results of this research are a KWH prototype that is able to monitor electrical energy consumption in boarding houses in real-time and calculate electricity costs based on the applicable electricity tariffs where the PZEM sensor is used as a tool to measure electrical energy consumption in boarding houses connected to the ESP8266 module to transmit data to the server via WiFi. Then, the data received is processed and presented in the form of values and a dashboard display on the web application in the form of voltage, current and energy data. With this Internet of Things-based electrical energy consumption information application, it is hoped that boarding house residents can monitor electrical energy usage more easily and help in determining payments for the electricity consumption used.&lt;/em&gt;&lt;/p&gt;
+ER  -

@@ -39,9 +39,9 @@ void initTime()
     Serial.println("================================");
 }
 
+
 void checkNewDay()
 {
-    // Cek setiap 1 menit
     if (millis() - lastTimeCheck < 60000)
         return;
 
@@ -52,22 +52,6 @@ void checkNewDay()
     if (!getLocalTime(&timeinfo))
         return;
 
-    Serial.println();
-    Serial.println("===== CHECK NEW DAY =====");
-
-    Serial.print("currentDay : ");
-    Serial.println(currentDay);
-
-    Serial.print("tm_mday    : ");
-    Serial.println(timeinfo.tm_mday);
-
-    Serial.printf(
-        "Tanggal sekarang : %02d-%02d-%04d\n",
-        timeinfo.tm_mday,
-        timeinfo.tm_mon + 1,
-        timeinfo.tm_year + 1900
-    );
-
     if (timeinfo.tm_mday != currentDay)
     {
         currentDay = timeinfo.tm_mday;
@@ -75,11 +59,11 @@ void checkNewDay()
         noInterrupts();
 
         rainTip = 0;
-        rainMM = 0;
 
         interrupts();
 
-        sendToServer();
+        rainBaseMM = 0;
+        rainMM = 0;
 
         Serial.println();
         Serial.println("================================");
@@ -89,10 +73,20 @@ void checkNewDay()
             timeinfo.tm_mon + 1,
             timeinfo.tm_year + 1900
         );
+
         Serial.println("Curah hujan direset");
+        Serial.println("Rain Base : 0.0 mm");
+        Serial.println("Rain Tip  : 0");
+        Serial.println("Rain MM   : 0.0 mm");
         Serial.println("================================");
+
+        if (WiFi.status() == WL_CONNECTED)
+        {
+            sendToServer();
+        }
     }
 }
+
 
 //=====================================================
 // Mengambil tanggal dan waktu dalam format

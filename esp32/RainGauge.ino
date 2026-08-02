@@ -1,39 +1,42 @@
-//=====================================================
-// RAIN GAUGE
-//=====================================================
 
-// Interrupt Service Routine (ISR)
-// Dipanggil setiap kali Rain Gauge menghasilkan satu pulsa (tip)
 void IRAM_ATTR rainISR()
 {
-  unsigned long now = micros();
+    unsigned long now = micros();
 
-  // Debounce selama 250 ms untuk menghindari pembacaan ganda
-  if (now - lastRainInterrupt > 250000)
-  {
-    rainTip++;                  // Menambah jumlah tip
-    lastRainInterrupt = now;    // Menyimpan waktu interrupt terakhir
-  }
+    if (now - lastRainInterrupt > 250000)
+    {
+        rainTip++;
+        lastRainInterrupt = now;
+    }
 }
 
-// Inisialisasi pin Rain Gauge dan mengaktifkan interrupt
 void initRainGauge()
 {
-  pinMode(RAIN_PIN, INPUT_PULLUP);
+    pinMode(RAIN_PIN, INPUT_PULLUP);
 
-  attachInterrupt(
-      digitalPinToInterrupt(RAIN_PIN),
-      rainISR,
-      FALLING);
+    noInterrupts();
+
+    rainTip = 0;
+    lastRainInterrupt = 0;
+
+    interrupts();
+
+    attachInterrupt(
+        digitalPinToInterrupt(RAIN_PIN),
+        rainISR,
+        FALLING
+    );
 }
 
-// Menghitung curah hujan berdasarkan jumlah tip
 void readRain()
 {
-  noInterrupts();           // Menonaktifkan interrupt sementara
-  long tip = rainTip;       // Menyalin jumlah tip
-  interrupts();             // Mengaktifkan kembali interrupt
+    long tip;
 
-  // Mengubah jumlah tip menjadi curah hujan (mm)
-  rainMM = tip * MM_PER_TIP;
+    noInterrupts();
+
+    tip = rainTip;
+
+    interrupts();
+
+    rainMM = rainBaseMM + (tip * MM_PER_TIP);
 }

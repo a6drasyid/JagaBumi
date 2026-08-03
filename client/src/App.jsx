@@ -18,7 +18,7 @@ import useLenis from "./hooks/useLenis";
 function App() {
   useLenis();
   return (
-    <div className="bg-[#050505] text-white">
+    <div className="relative min-h-screen w-full max-w-full overflow-x-clip bg-[#050505] text-white">
       <AuroraBackground />
       <FloatingGlow />
       <Noise />
@@ -26,19 +26,12 @@ function App() {
       <Navbar />
 
       <Hero />
-
       <MonitoringSummary />
-
       <SystemFlow />
-
       <RealtimeMonitoring />
-
       <HistorySection />
-
       <SensorSection />
-
       <StatisticsSection />
-
       <LocationSection />
 
       <Footer />

@@ -16,6 +16,9 @@ import {
 
 import { Line } from "react-chartjs-2";
 
+// =====================================================
+// LIVE POINT PLUGIN
+// =====================================================
 const livePointPlugin = {
   id: "livePointPlugin",
 
@@ -72,7 +75,6 @@ export default function RealtimeChart() {
   const [draftEndDate, setDraftEndDate] = useState("");
 
   const [showCustomPanel, setShowCustomPanel] = useState(false);
-
   const [showExportMenu, setShowExportMenu] = useState(false);
 
   const customDropdownRef = useRef(null);
@@ -80,6 +82,9 @@ export default function RealtimeChart() {
 
   const [, forceUpdate] = useState(0);
 
+  // =====================================================
+  // LIVE POINT ANIMATION
+  // =====================================================
   useEffect(() => {
     const timer = setInterval(() => {
       forceUpdate((v) => v + 1);
@@ -88,6 +93,9 @@ export default function RealtimeChart() {
     return () => clearInterval(timer);
   }, []);
 
+  // =====================================================
+  // CLICK OUTSIDE DROPDOWN
+  // =====================================================
   useEffect(() => {
     function handleClickOutside(event) {
       if (customDropdownRef.current && !customDropdownRef.current.contains(event.target)) {
@@ -106,6 +114,9 @@ export default function RealtimeChart() {
     };
   }, []);
 
+  // =====================================================
+  // LABELS
+  // =====================================================
   const labels = history.map((item) => {
     const date = new Date(item.created_at);
 
@@ -129,7 +140,6 @@ export default function RealtimeChart() {
 
       const diffDay = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
 
-      // Custom ≤ 1 hari
       if (diffDay <= 1) {
         return date.toLocaleTimeString("id-ID", {
           hour: "2-digit",
@@ -137,7 +147,6 @@ export default function RealtimeChart() {
         });
       }
 
-      // Custom > 1 hari
       return date.toLocaleDateString("id-ID", {
         day: "2-digit",
         month: "short",
@@ -147,6 +156,9 @@ export default function RealtimeChart() {
     return date.toLocaleTimeString("id-ID");
   });
 
+  // =====================================================
+  // CHART DATA
+  // =====================================================
   const data = {
     labels,
 
@@ -162,7 +174,6 @@ export default function RealtimeChart() {
 
         backgroundColor: (context) => {
           const chart = context.chart;
-
           const { ctx, chartArea } = chart;
 
           if (!chartArea) return null;
@@ -177,15 +188,14 @@ export default function RealtimeChart() {
         },
 
         borderWidth: 1,
-
         fill: true,
-
         tension: 0.5,
 
         cubicInterpolationMode: "monotone",
 
         pointRadius: (context) => {
           const last = history.length - 1;
+
           return context.dataIndex === last ? 7 : 0;
         },
 
@@ -203,7 +213,6 @@ export default function RealtimeChart() {
 
         backgroundColor: (context) => {
           const chart = context.chart;
-
           const { ctx, chartArea } = chart;
 
           if (!chartArea) return null;
@@ -218,15 +227,14 @@ export default function RealtimeChart() {
         },
 
         borderWidth: 1,
-
         fill: true,
-
         tension: 0.5,
 
         cubicInterpolationMode: "monotone",
 
         pointRadius: (context) => {
           const last = history.length - 1;
+
           return context.dataIndex === last ? 7 : 0;
         },
 
@@ -244,7 +252,6 @@ export default function RealtimeChart() {
 
         backgroundColor: (context) => {
           const chart = context.chart;
-
           const { ctx, chartArea } = chart;
 
           if (!chartArea) return null;
@@ -259,15 +266,14 @@ export default function RealtimeChart() {
         },
 
         borderWidth: 1,
-
         fill: true,
-
         tension: 0.5,
 
         cubicInterpolationMode: "monotone",
 
         pointRadius: (context) => {
           const last = history.length - 1;
+
           return context.dataIndex === last ? 7 : 0;
         },
 
@@ -276,12 +282,18 @@ export default function RealtimeChart() {
     ],
   };
 
+  // =====================================================
+  // FORMAT CATEGORY
+  // =====================================================
   const formatCategory = (text) => {
     if (!text) return "";
 
     return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
   };
 
+  // =====================================================
+  // CHART OPTIONS
+  // =====================================================
   const options = {
     responsive: true,
 
@@ -302,6 +314,14 @@ export default function RealtimeChart() {
           color: "#fff",
           usePointStyle: true,
           pointStyle: "circle",
+
+          // Supaya legend lebih aman di layar sempit
+          boxWidth: 8,
+          boxHeight: 8,
+          padding: 12,
+          font: {
+            size: 11,
+          },
         },
       },
 
@@ -325,6 +345,7 @@ export default function RealtimeChart() {
                 month: "long",
                 year: "numeric",
               }),
+
               date.toLocaleTimeString("id-ID", {
                 hour: "2-digit",
                 minute: "2-digit",
@@ -358,6 +379,15 @@ export default function RealtimeChart() {
       x: {
         ticks: {
           color: "#9CA3AF",
+
+          // Menghindari label terlalu padat
+          maxRotation: 0,
+          autoSkip: true,
+          maxTicksLimit: 7,
+
+          font: {
+            size: 10,
+          },
         },
 
         grid: {
@@ -370,6 +400,10 @@ export default function RealtimeChart() {
 
         ticks: {
           color: "#9CA3AF",
+
+          font: {
+            size: 10,
+          },
         },
 
         grid: {
@@ -379,6 +413,9 @@ export default function RealtimeChart() {
     },
   };
 
+  // =====================================================
+  // EXPORT EXCEL
+  // =====================================================
   const handleExportExcel = async () => {
     try {
       let url = "https://jagabumi.up.railway.app/api/export/excel";
@@ -413,10 +450,14 @@ export default function RealtimeChart() {
       setShowExportMenu(false);
     } catch (error) {
       console.error(error);
+
       alert("Export Excel gagal.");
     }
   };
 
+  // =====================================================
+  // EXPORT PDF
+  // =====================================================
   const handleExportPDF = async () => {
     try {
       let url = "https://jagabumi.up.railway.app/api/export/pdf";
@@ -451,108 +492,379 @@ export default function RealtimeChart() {
       setShowExportMenu(false);
     } catch (error) {
       console.error(error);
+
       alert("Export PDF gagal.");
     }
   };
 
   return (
-    <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl p-8 h-[500px]">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h3 className="text-xl font-semibold text-white">Grafik Monitoring</h3>
+    <div
+      className="
+        relative
 
-          <p className="text-sm text-gray-400">Data sensor berdasarkan rentang waktu</p>
+        flex
+        h-[440px]
+        w-full
+        min-w-0
+        flex-col
+
+        rounded-2xl
+
+        border
+        border-white/10
+
+        bg-white/5
+        backdrop-blur-xl
+
+        p-3
+
+        shadow-2xl
+
+        min-[375px]:p-4
+
+        sm:h-[460px]
+        sm:rounded-3xl
+        sm:p-5
+
+        md:h-[480px]
+        md:p-6
+
+        lg:h-[500px]
+        lg:p-8
+      "
+    >
+      {/* =================================================
+          HEADER
+      ================================================= */}
+      <div
+        className="
+          mb-4
+
+          flex
+          w-full
+          min-w-0
+
+          flex-col
+
+          gap-4
+
+          sm:mb-5
+
+          md:flex-row
+          md:items-start
+          md:justify-between
+
+          lg:mb-6
+          lg:items-center
+      "
+      >
+        {/* =================================================
+            TITLE
+        ================================================= */}
+        <div className="min-w-0">
+          <h3
+            className="
+              text-base
+              font-semibold
+              text-white
+
+              sm:text-lg
+
+              lg:text-xl
+            "
+          >
+            Grafik Monitoring
+          </h3>
+
+          <p
+            className="
+              mt-1
+
+              text-[11px]
+              leading-5
+              text-gray-400
+
+              sm:text-xs
+
+              lg:mt-0
+              lg:text-sm
+            "
+          >
+            Data sensor berdasarkan rentang waktu
+          </p>
         </div>
 
-        <div className="relative flex gap-2">
+        {/* =================================================
+            FILTER + EXPORT
+        ================================================= */}
+        <div
+          className="
+            flex
+            w-full
+            min-w-0
+
+            flex-wrap
+            items-center
+
+            gap-1.5
+
+            sm:gap-2
+
+            md:w-auto
+            md:justify-end
+          "
+        >
+          {/* 1 JAM */}
           <button
             onClick={() => setRange("1h")}
-            className={`px-4 py-2 rounded-full text-sm transition ${
-              range === "1h"
-                ? "bg-emerald-500 text-white"
-                : "bg-white/5 text-gray-300 hover:bg-white/10"
-            }`}
+            className={`
+              shrink-0
+
+              rounded-full
+
+              px-2.5
+              py-2
+
+              text-[10px]
+              font-medium
+
+              transition
+
+              min-[375px]:px-3
+              min-[375px]:text-[11px]
+
+              sm:px-4
+              sm:text-sm
+
+              ${
+                range === "1h"
+                  ? "bg-emerald-500 text-white"
+                  : "bg-white/5 text-gray-300 hover:bg-white/10"
+              }
+            `}
           >
             1 Jam
           </button>
 
+          {/* 24 JAM */}
           <button
             onClick={() => setRange("1d")}
-            className={`px-4 py-2 rounded-full text-sm transition ${
-              range === "1d"
-                ? "bg-emerald-500 text-white"
-                : "bg-white/5 text-gray-300 hover:bg-white/10"
-            }`}
+            className={`
+              shrink-0
+
+              rounded-full
+
+              px-2.5
+              py-2
+
+              text-[10px]
+              font-medium
+
+              transition
+
+              min-[375px]:px-3
+              min-[375px]:text-[11px]
+
+              sm:px-4
+              sm:text-sm
+
+              ${
+                range === "1d"
+                  ? "bg-emerald-500 text-white"
+                  : "bg-white/5 text-gray-300 hover:bg-white/10"
+              }
+            `}
           >
             24 Jam
           </button>
 
-          <div className="relative" ref={customDropdownRef}>
+          {/* =================================================
+              CUSTOM
+          ================================================= */}
+          <div className="relative min-w-0" ref={customDropdownRef}>
             <button
               onClick={() => {
                 setShowExportMenu(false);
 
                 setShowCustomPanel((prev) => !prev);
               }}
-              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm transition ${
-                range === "custom"
-                  ? "bg-emerald-500 text-white"
-                  : "bg-white/5 text-gray-300 hover:bg-white/10"
-              }`}
+              className={`
+                flex
+                shrink-0
+                items-center
+
+                gap-1
+
+                rounded-full
+
+                px-2.5
+                py-2
+
+                text-[10px]
+                font-medium
+
+                transition
+
+                min-[375px]:px-3
+                min-[375px]:text-[11px]
+
+                sm:gap-2
+                sm:px-4
+                sm:text-sm
+
+                ${
+                  range === "custom"
+                    ? "bg-emerald-500 text-white"
+                    : "bg-white/5 text-gray-300 hover:bg-white/10"
+                }
+              `}
             >
               <span>Custom</span>
 
               <ChevronDown
-                size={16}
-                className={`transition-transform duration-300 ${
-                  showCustomPanel ? "rotate-180" : ""
-                }`}
+                className={`
+                  h-3.5
+                  w-3.5
+
+                  shrink-0
+
+                  transition-transform
+                  duration-300
+
+                  sm:h-4
+                  sm:w-4
+
+                  ${showCustomPanel ? "rotate-180" : ""}
+                `}
               />
             </button>
 
+            {/* =================================================
+                CUSTOM DROPDOWN
+            ================================================= */}
             <AnimatePresence>
               {showCustomPanel && (
                 <motion.div
-                  initial={{ opacity: 0, y: -10, scale: 0.98 }}
-                  animate={{ opacity: 1, y: 8, scale: 1 }}
-                  exit={{ opacity: 0, y: -10, scale: 0.98 }}
-                  transition={{ duration: 0.2 }}
+                  initial={{
+                    opacity: 0,
+                    y: -10,
+                    scale: 0.98,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 8,
+                    scale: 1,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    y: -10,
+                    scale: 0.98,
+                  }}
+                  transition={{
+                    duration: 0.2,
+                  }}
                   className="
-absolute
-right-0
-top-full
-mt-2
-w-72
-rounded-2xl
-border border-white/10
-bg-[#111827]/95
-backdrop-blur-xl
-shadow-2xl
-p-4
-z-50
-"
+                    absolute
+                    left-0
+                    top-full
+                    z-50
+
+                    mt-2
+
+                    w-[min(18rem,calc(100vw-2rem))]
+
+                    rounded-2xl
+
+                    border
+                    border-white/10
+
+                    bg-[#111827]/95
+                    backdrop-blur-xl
+
+                    p-3
+
+                    shadow-2xl
+
+                    sm:left-auto
+                    sm:right-0
+                    sm:w-72
+                    sm:p-4
+                  "
                 >
                   <div className="space-y-4">
                     <div>
-                      <label className="block text-xs text-gray-400 mb-2">Tanggal Mulai</label>
+                      <label
+                        className="
+                          mb-2
+                          block
+                          text-xs
+                          text-gray-400
+                        "
+                      >
+                        Tanggal Mulai
+                      </label>
 
                       <input
                         type="date"
                         value={draftStartDate}
                         onChange={(e) => setDraftStartDate(e.target.value)}
-                        className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-2 text-white"
+                        className="
+                          w-full
+                          min-w-0
+
+                          rounded-xl
+
+                          border
+                          border-white/10
+
+                          bg-white/5
+
+                          px-3
+                          py-2
+
+                          text-sm
+                          text-white
+
+                          sm:px-4
+                        "
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs text-gray-400 mb-2">Tanggal Selesai</label>
+                      <label
+                        className="
+                          mb-2
+                          block
+                          text-xs
+                          text-gray-400
+                        "
+                      >
+                        Tanggal Selesai
+                      </label>
 
                       <input
                         type="date"
                         value={draftEndDate}
                         onChange={(e) => setDraftEndDate(e.target.value)}
-                        className="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-2 text-white"
+                        className="
+                          w-full
+                          min-w-0
+
+                          rounded-xl
+
+                          border
+                          border-white/10
+
+                          bg-white/5
+
+                          px-3
+                          py-2
+
+                          text-sm
+                          text-white
+
+                          sm:px-4
+                        "
                       />
                     </div>
 
@@ -567,7 +879,24 @@ z-50
 
                         setShowCustomPanel(false);
                       }}
-                      className="w-full rounded-xl bg-emerald-500 py-3 text-white hover:bg-emerald-600"
+                      className="
+                        w-full
+
+                        rounded-xl
+
+                        bg-emerald-500
+
+                        py-2.5
+
+                        text-sm
+                        text-white
+
+                        transition
+
+                        hover:bg-emerald-600
+
+                        sm:py-3
+                      "
                     >
                       Terapkan Filter
                     </button>
@@ -577,7 +906,10 @@ z-50
             </AnimatePresence>
           </div>
 
-          <div className="relative" ref={exportDropdownRef}>
+          {/* =================================================
+              EXPORT
+          ================================================= */}
+          <div className="relative min-w-0" ref={exportDropdownRef}>
             <button
               onClick={() => {
                 setShowCustomPanel(false);
@@ -585,94 +917,206 @@ z-50
                 setShowExportMenu((prev) => !prev);
               }}
               className="
-        flex
-        items-center
-        gap-2
-        rounded-full
-        bg-white/5
-        px-4
-        py-2
-        text-sm
-        text-white
-        hover:bg-white/10
-        transition
-        "
+                flex
+                shrink-0
+                items-center
+
+                gap-1
+
+                rounded-full
+
+                bg-white/5
+
+                px-2.5
+                py-2
+
+                text-[10px]
+                font-medium
+                text-white
+
+                transition
+
+                hover:bg-white/10
+
+                min-[375px]:px-3
+                min-[375px]:text-[11px]
+
+                sm:gap-2
+                sm:px-4
+                sm:text-sm
+              "
             >
-              <Download size={16} />
-              Export
+              <Download
+                className="
+                  h-3.5
+                  w-3.5
+                  shrink-0
+
+                  sm:h-4
+                  sm:w-4
+                "
+              />
+
+              <span>Export</span>
+
               <ChevronDown
-                size={15}
-                className={`transition ${showExportMenu ? "rotate-180" : ""}`}
+                className={`
+                  h-3.5
+                  w-3.5
+                  shrink-0
+
+                  transition-transform
+
+                  sm:h-[15px]
+                  sm:w-[15px]
+
+                  ${showExportMenu ? "rotate-180" : ""}
+                `}
               />
             </button>
+
+            {/* =================================================
+                EXPORT DROPDOWN
+            ================================================= */}
+            <AnimatePresence>
+              {showExportMenu && (
+                <motion.div
+                  initial={{
+                    opacity: 0,
+                    y: -10,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 8,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    y: -10,
+                  }}
+                  transition={{
+                    duration: 0.2,
+                  }}
+                  className="
+                    absolute
+                    right-0
+                    top-full
+                    z-50
+
+                    mt-2
+
+                    w-48
+
+                    overflow-hidden
+
+                    rounded-2xl
+
+                    border
+                    border-white/10
+
+                    bg-[#111827]/95
+                    backdrop-blur-xl
+
+                    shadow-2xl
+
+                    sm:w-56
+                  "
+                >
+                  <button
+                    onClick={handleExportExcel}
+                    className="
+                      flex
+                      w-full
+                      items-center
+
+                      gap-3
+
+                      px-4
+                      py-3
+
+                      text-left
+                      text-xs
+                      text-white
+
+                      transition
+
+                      hover:bg-white/5
+
+                      sm:text-sm
+                    "
+                  >
+                    <FileSpreadsheet
+                      className="
+                        h-4
+                        w-4
+                        shrink-0
+
+                        sm:h-[18px]
+                        sm:w-[18px]
+                      "
+                    />
+                    Export Excel
+                  </button>
+
+                  <button
+                    onClick={handleExportPDF}
+                    className="
+                      flex
+                      w-full
+                      items-center
+
+                      gap-3
+
+                      px-4
+                      py-3
+
+                      text-left
+                      text-xs
+                      text-white
+
+                      transition
+
+                      hover:bg-white/5
+
+                      sm:text-sm
+                    "
+                  >
+                    <FileText
+                      className="
+                        h-4
+                        w-4
+                        shrink-0
+
+                        sm:h-[18px]
+                        sm:w-[18px]
+                      "
+                    />
+                    Export PDF
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-          <AnimatePresence>
-            {showExportMenu && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-
-                animate={{ opacity: 1, y: 8 }}
-
-                exit={{ opacity: 0, y: -10 }}
-
-                transition={{ duration: 0.2 }}
-
-                className="
-absolute
-right-0
-top-full
-mt-2
-w-56
-rounded-2xl
-border
-border-white/10
-bg-[#111827]/95
-backdrop-blur-xl
-shadow-2xl
-overflow-hidden
-z-50
-"
-              >
-                <button
-                  onClick={handleExportExcel}
-                  className="
-w-full
-flex
-items-center
-gap-3
-px-4
-py-3
-hover:bg-white/5
-transition
-"
-                >
-                  <FileSpreadsheet size={18} />
-                  Export Excel
-                </button>
-
-                <button
-                  onClick={handleExportPDF}
-                  className="
-w-full
-flex
-items-center
-gap-3
-px-4
-py-3
-hover:bg-white/5
-transition
-"
-                >
-                  <FileText size={18} />
-                  Export PDF
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
       </div>
-      <AnimatePresence initial={false}></AnimatePresence>
-      <div className="h-[380px]">
+
+      {/* =================================================
+          CHART
+      ================================================= */}
+      <div
+        className="
+          relative
+
+          min-h-0
+          min-w-0
+
+          flex-1
+
+          overflow-hidden
+
+          lg:h-[380px]
+          lg:flex-none
+        "
+      >
         <Line data={data} options={options} />
       </div>
     </div>

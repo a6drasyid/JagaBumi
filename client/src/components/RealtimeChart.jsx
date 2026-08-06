@@ -37,13 +37,11 @@ const livePointPlugin = {
 
       ctx.save();
 
-      // Ring
       ctx.beginPath();
       ctx.arc(point.x, point.y, 7, 0, Math.PI * 2);
       ctx.fillStyle = `${dataset.borderColor}22`;
       ctx.fill();
 
-      // Point
       ctx.beginPath();
       ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
       ctx.fillStyle = dataset.borderColor;
@@ -406,9 +404,6 @@ export default function RealtimeChart() {
           titleColor: "#FFFFFF",
           bodyColor: "#D4D4D8",
 
-          // =================================================
-          // WARNA STATUS
-          // =================================================
           footerColor: (context) => {
             const index = context?.tooltip?.dataPoints?.[0]?.dataIndex;
 
@@ -519,9 +514,7 @@ export default function RealtimeChart() {
                     : `Kelembaban Tanah : ${item.soil}% • ${formatCategory(item.soil_fuzzy)}`;
 
                 case "Kemiringan":
-                  return isMobile
-                    ? `Kemiringan: ${item.tilt}° • ${formatCategory(item.tilt_fuzzy)}`
-                    : `Kemiringan: ${item.tilt}° • ${formatCategory(item.tilt_fuzzy)}`;
+                  return `Kemiringan: ${item.tilt}° • ${formatCategory(item.tilt_fuzzy)}`;
 
                 default:
                   return context.formattedValue;
@@ -742,6 +735,7 @@ export default function RealtimeChart() {
           flex
           min-w-0
           flex-col
+
           gap-4
 
           lg:mb-6
@@ -799,18 +793,32 @@ export default function RealtimeChart() {
         >
           {/* =================================================
               BUTTON ROW
+
+              MOBILE:
+              4 tombol selalu sejajar.
+
+              TABLET/DESKTOP:
+              kembali ke ukuran normal.
           ================================================= */}
           <div
             className="
-              flex
+              grid
               w-full
               min-w-0
-              flex-wrap
+
+              grid-cols-[0.9fr_1fr_1.25fr_1.35fr]
+
               items-center
 
-              gap-2
+              gap-1.5
 
-              lg:w-auto
+              min-[375px]:gap-2
+
+              sm:flex
+              sm:w-auto
+              sm:flex-wrap
+              sm:gap-2
+
               lg:flex-nowrap
             "
           >
@@ -827,20 +835,26 @@ export default function RealtimeChart() {
               className={`
                 flex
                 h-9
-                shrink-0
+                min-w-0
 
                 items-center
                 justify-center
 
                 rounded-full
 
-                px-3
+                px-1
 
-                text-[10px]
+                text-[9px]
                 font-medium
+                whitespace-nowrap
 
                 transition-colors
 
+                min-[375px]:px-2
+                min-[375px]:text-[10px]
+
+                sm:h-10
+                sm:w-auto
                 sm:px-4
                 sm:text-xs
 
@@ -869,20 +883,26 @@ export default function RealtimeChart() {
               className={`
                 flex
                 h-9
-                shrink-0
+                min-w-0
 
                 items-center
                 justify-center
 
                 rounded-full
 
-                px-3
+                px-1
 
-                text-[10px]
+                text-[9px]
                 font-medium
+                whitespace-nowrap
 
                 transition-colors
 
+                min-[375px]:px-2
+                min-[375px]:text-[10px]
+
+                sm:h-10
+                sm:w-auto
                 sm:px-4
                 sm:text-xs
 
@@ -911,22 +931,29 @@ export default function RealtimeChart() {
               className={`
                 flex
                 h-9
-                shrink-0
+                min-w-0
 
                 items-center
                 justify-center
 
-                gap-1.5
+                gap-1
 
                 rounded-full
 
-                px-3
+                px-1
 
-                text-[10px]
+                text-[9px]
                 font-medium
+                whitespace-nowrap
 
                 transition-colors
 
+                min-[375px]:gap-1.5
+                min-[375px]:px-2
+                min-[375px]:text-[10px]
+
+                sm:h-10
+                sm:w-auto
                 sm:px-4
                 sm:text-xs
 
@@ -940,12 +967,19 @@ export default function RealtimeChart() {
                 }
               `}
             >
-              Custom
+              <span>Custom</span>
+
               <ChevronDown
-                size={14}
                 className={`
+                  h-3
+                  w-3
+                  shrink-0
+
                   transition-transform
                   duration-200
+
+                  sm:h-3.5
+                  sm:w-3.5
 
                   ${showCustomPanel ? "rotate-180" : ""}
                 `}
@@ -955,7 +989,7 @@ export default function RealtimeChart() {
             {/* =============================================
                 EXPORT
             ============================================= */}
-            <div className="relative">
+            <div className="relative min-w-0">
               <button
                 type="button"
                 onClick={() => {
@@ -966,27 +1000,35 @@ export default function RealtimeChart() {
                 className="
                   flex
                   h-9
-                  shrink-0
+                  w-full
+                  min-w-0
 
                   items-center
                   justify-center
 
-                  gap-1.5
+                  gap-1
 
                   rounded-full
 
                   bg-white/5
 
-                  px-3
+                  px-1
 
-                  text-[10px]
+                  text-[9px]
                   font-medium
                   text-white
+                  whitespace-nowrap
 
                   transition-colors
 
                   hover:bg-white/10
 
+                  min-[375px]:gap-1.5
+                  min-[375px]:px-2
+                  min-[375px]:text-[10px]
+
+                  sm:h-10
+                  sm:w-auto
                   sm:px-4
                   sm:text-xs
 
@@ -994,13 +1036,33 @@ export default function RealtimeChart() {
                   lg:text-sm
                 "
               >
-                <Download size={14} />
-                Export
+                <Download
+                  className="
+                    h-3
+                    w-3
+                    shrink-0
+
+                    min-[375px]:h-3.5
+                    min-[375px]:w-3.5
+
+                    sm:h-4
+                    sm:w-4
+                  "
+                />
+
+                <span>Export</span>
+
                 <ChevronDown
-                  size={13}
                   className={`
+                    h-3
+                    w-3
+                    shrink-0
+
                     transition-transform
                     duration-200
+
+                    sm:h-3.5
+                    sm:w-3.5
 
                     ${showExportMenu ? "rotate-180" : ""}
                   `}
@@ -1034,7 +1096,7 @@ export default function RealtimeChart() {
                       top-full
                       z-50
 
-                      w-44
+                      w-40
 
                       overflow-hidden
 
@@ -1078,8 +1140,20 @@ export default function RealtimeChart() {
                         sm:text-sm
                       "
                     >
-                      <FileSpreadsheet size={16} />
-                      Export Excel
+                      <FileSpreadsheet
+                        className="
+                          h-4
+                          w-4
+                          shrink-0
+
+                          text-emerald-400
+
+                          sm:h-[17px]
+                          sm:w-[17px]
+                        "
+                      />
+
+                      <span>Export Excel</span>
                     </button>
 
                     <button
@@ -1092,6 +1166,9 @@ export default function RealtimeChart() {
                         items-center
 
                         gap-2.5
+
+                        border-t
+                        border-white/5
 
                         px-3
                         py-2.5
@@ -1110,8 +1187,20 @@ export default function RealtimeChart() {
                         sm:text-sm
                       "
                     >
-                      <FileText size={16} />
-                      Export PDF
+                      <FileText
+                        className="
+                          h-4
+                          w-4
+                          shrink-0
+
+                          text-red-400
+
+                          sm:h-[17px]
+                          sm:w-[17px]
+                        "
+                      />
+
+                      <span>Export PDF</span>
                     </button>
                   </motion.div>
                 )}

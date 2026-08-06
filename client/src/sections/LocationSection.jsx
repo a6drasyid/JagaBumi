@@ -1,5 +1,31 @@
+import L from "leaflet";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
+
+import "leaflet/dist/leaflet.css";
+
+// =====================================================
+// LEAFLET MARKER ICON
+// Fix Vite / Vercel marker asset 404
+// =====================================================
+const defaultMarkerIcon = L.icon({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+
+  shadowSize: [41, 41],
+});
+
+// =====================================================
+// LOCATION
+// =====================================================
 const position = [-8.3807, 116.5312]; // Pusuk Sembalun (perkiraan)
 
 export default function LocationSection() {
@@ -130,13 +156,6 @@ export default function LocationSection() {
 
         {/* =================================================
             CONTENT GRID
-
-            MOBILE / TABLET:
-            Map
-            Info
-
-            DESKTOP:
-            Map 2/3 + Info 1/3
         ================================================= */}
         <div
           className="
@@ -199,7 +218,12 @@ export default function LocationSection() {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
 
-              <Marker position={position}>
+              {/* ============================================
+                  MARKER
+                  icon diberikan langsung agar Vite
+                  mengelola asset marker saat build
+              ============================================ */}
+              <Marker position={position} icon={defaultMarkerIcon}>
                 <Popup>Pusuk Sembalun</Popup>
               </Marker>
             </MapContainer>
@@ -256,11 +280,7 @@ export default function LocationSection() {
             </h3>
 
             {/* =================================================
-                MOBILE:
-                2 kolom
-
-                DESKTOP:
-                kembali vertikal seperti desain awal
+                INFO GRID
             ================================================= */}
             <div
               className="

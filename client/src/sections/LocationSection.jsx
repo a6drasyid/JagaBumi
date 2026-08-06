@@ -1,13 +1,21 @@
 export default function LocationSection() {
   // =====================================================
-  // GOOGLE MAPS
+  // LOCATION
   // =====================================================
-  const latitude = -8.3807;
-  const longitude = 116.5312;
+  const latitude = -8.416489;
+  const longitude = 116.537822;
 
-  const googleMapsEmbedUrl = `https://www.google.com/maps?q=${latitude},${longitude}&z=14&output=embed`;
+  // Satellite sebagai tampilan awal
+  const googleMapsEmbedUrl =
+    `https://maps.google.com/maps` +
+    `?q=${latitude},${longitude}` +
+    `&z=17` +
+    `&t=k` +
+    `&output=embed`;
 
-  const googleMapsOpenUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+  // Link Google Maps
+  const googleMapsOpenUrl =
+    `https://www.google.com/maps/search/?api=1` + `&query=${latitude},${longitude}`;
 
   return (
     <section
@@ -16,13 +24,12 @@ export default function LocationSection() {
         w-full
         max-w-full
         overflow-hidden
-
         bg-[#050505]
 
         py-14
         sm:py-16
         md:py-20
-        lg:py-32
+        lg:py-28
       "
     >
       {/* =================================================
@@ -31,7 +38,6 @@ export default function LocationSection() {
       <div
         className="
           mx-auto
-
           w-full
           max-w-7xl
           min-w-0
@@ -43,23 +49,22 @@ export default function LocationSection() {
         "
       >
         {/* =================================================
-            SECTION HEADER
+            HEADER
         ================================================= */}
         <div
           className="
             mx-auto
-
             mb-8
             w-full
             max-w-4xl
-
             text-center
 
             sm:mb-10
             md:mb-12
-            lg:mb-16
+            lg:mb-14
           "
         >
+          {/* LABEL */}
           <p
             className="
               text-[10px]
@@ -73,17 +78,17 @@ export default function LocationSection() {
               sm:text-xs
               sm:tracking-[0.22em]
 
-              lg:text-base
+              lg:text-sm
               lg:tracking-widest
             "
           >
             Lokasi Penelitian
           </p>
 
+          {/* TITLE */}
           <h2
             className="
               mt-2.5
-
               break-words
 
               text-[1.75rem]
@@ -103,10 +108,10 @@ export default function LocationSection() {
             Pusuk Sembalun
           </h2>
 
+          {/* DESCRIPTION */}
           <p
             className="
               mx-auto
-
               mt-3
               max-w-3xl
 
@@ -131,297 +136,229 @@ export default function LocationSection() {
         </div>
 
         {/* =================================================
-            CONTENT
+            GOOGLE MAPS - FULL WIDTH
         ================================================= */}
         <div
           className="
-            grid
+            relative
             w-full
             min-w-0
+            overflow-hidden
 
-            grid-cols-1
+            rounded-2xl
 
-            gap-4
+            border
+            border-white/10
 
-            sm:gap-5
-            md:gap-6
+            bg-[#0a0a0a]
 
-            lg:grid-cols-3
-            lg:gap-8
+            shadow-2xl
+
+            sm:rounded-3xl
           "
         >
+          <iframe
+            title="Lokasi Penelitian Pusuk Sembalun"
+            src={googleMapsEmbedUrl}
+            loading="lazy"
+            allowFullScreen
+            referrerPolicy="no-referrer-when-downgrade"
+            className="
+              block
+              w-full
+              border-0
+
+              h-[320px]
+
+              min-[375px]:h-[350px]
+
+              sm:h-[420px]
+
+              md:h-[480px]
+
+              lg:h-[560px]
+
+              xl:h-[600px]
+            "
+          />
+
           {/* =================================================
-              GOOGLE MAPS
+              BOTTOM OVERLAY
           ================================================= */}
           <div
             className="
-              relative
+              pointer-events-none
+              absolute
+              inset-x-0
+              bottom-0
 
-              w-full
-              min-w-0
+              h-24
 
-              overflow-hidden
-
-              rounded-2xl
-
-              border
-              border-white/10
-
-              bg-[#111827]
-
-              sm:rounded-3xl
-
-              lg:col-span-2
+              bg-gradient-to-t
+              from-black/50
+              via-black/15
+              to-transparent
             "
-          >
-            <iframe
-              title="Lokasi Pusuk Sembalun"
-              src={googleMapsEmbedUrl}
-              loading="lazy"
-              allowFullScreen
-              referrerPolicy="no-referrer-when-downgrade"
-              className="
-                block
-
-                h-[280px]
-                w-full
-
-                border-0
-
-                min-[375px]:h-[300px]
-
-                sm:h-[350px]
-
-                md:h-[400px]
-
-                lg:h-[500px]
-              "
-            />
-
-            {/* =============================================
-                OPEN GOOGLE MAPS
-            ============================================= */}
-            <a
-              href={googleMapsOpenUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="
-                absolute
-
-                bottom-3
-                left-3
-                z-10
-
-                inline-flex
-                h-9
-                items-center
-                justify-center
-
-                rounded-full
-
-                border
-                border-white/10
-
-                bg-black/80
-
-                px-3
-
-                text-[10px]
-                font-medium
-                text-white
-
-                backdrop-blur-md
-
-                hover:bg-black
-
-                min-[375px]:px-4
-                min-[375px]:text-[11px]
-
-                sm:bottom-4
-                sm:left-4
-                sm:h-10
-                sm:text-xs
-              "
-            >
-              Buka di Google Maps
-            </a>
-          </div>
+          />
 
           {/* =================================================
               LOCATION INFO
           ================================================= */}
           <div
             className="
-              glass-card
+              pointer-events-none
 
-              flex
-              h-full
-              w-full
-              min-w-0
-              flex-col
+              absolute
+              left-3
+              top-3
+              z-10
 
-              rounded-2xl
+              max-w-[70%]
+
+              rounded-xl
 
               border
               border-white/10
 
-              bg-white/5
-              backdrop-blur-xl
+              bg-black/70
 
-              p-4
+              px-3
+              py-2
 
-              sm:rounded-3xl
-              sm:p-5
+              backdrop-blur-md
 
-              md:p-6
-
-              lg:p-8
+              sm:left-4
+              sm:top-4
+              sm:rounded-2xl
+              sm:px-4
+              sm:py-3
             "
           >
-            <h3
+            <p
               className="
-                break-words
+                text-[10px]
+                font-medium
+                text-gray-400
 
-                text-lg
-                font-bold
+                sm:text-xs
+              "
+            >
+              Titik Penelitian
+            </p>
+
+            <p
+              className="
+                mt-0.5
+
+                text-xs
+                font-semibold
                 text-white
 
-                min-[375px]:text-xl
-
-                sm:text-2xl
+                sm:text-sm
               "
             >
-              Informasi Lokasi
-            </h3>
+              Pusuk Sembalun
+            </p>
 
-            {/* =================================================
-                MOBILE  : 2 KOLOM
-                DESKTOP : 1 KOLOM
-            ================================================= */}
-            <div
+            <p
               className="
-                mt-5
+                mt-0.5
 
-                grid
-                grid-cols-2
+                text-[9px]
+                text-gray-400
 
-                gap-x-4
-                gap-y-5
-
-                sm:mt-6
-                sm:gap-x-6
-                sm:gap-y-6
-
-                lg:mt-8
-                lg:grid-cols-1
-                lg:gap-0
-                lg:space-y-6
+                sm:text-[11px]
               "
             >
-              {/* LOCATION */}
-              <LocationItem label="Lokasi" value="Pusuk Sembalun" />
-
-              {/* KABUPATEN */}
-              <LocationItem label="Kabupaten" value="Lombok Timur" />
-
-              {/* PROVINSI */}
-              <LocationItem label="Provinsi" value="Nusa Tenggara Barat" />
-
-              {/* NEGARA */}
-              <LocationItem label="Negara" value="Indonesia" />
-            </div>
-
-            {/* =================================================
-                COORDINATE
-            ================================================= */}
-            <div
-              className="
-                mt-6
-
-                border-t
-                border-white/10
-
-                pt-5
-
-                lg:mt-auto
-                lg:pt-6
-              "
-            >
-              <p
-                className="
-                  text-[10px]
-                  text-gray-500
-
-                  min-[375px]:text-[11px]
-
-                  sm:text-xs
-                "
-              >
-                Koordinat
-              </p>
-
-              <p
-                className="
-                  mt-1
-
-                  text-xs
-                  font-medium
-                  text-gray-300
-
-                  min-[375px]:text-sm
-                "
-              >
-                {latitude}, {longitude}
-              </p>
-            </div>
+              {latitude}, {longitude}
+            </p>
           </div>
+
+          {/* =================================================
+              SATELLITE BADGE
+          ================================================= */}
+          <div
+            className="
+              pointer-events-none
+
+              absolute
+              right-3
+              top-3
+              z-10
+
+              rounded-full
+
+              border
+              border-white/10
+
+              bg-black/70
+
+              px-3
+              py-1.5
+
+              text-[9px]
+              font-medium
+              text-white
+
+              backdrop-blur-md
+
+              sm:right-4
+              sm:top-4
+              sm:text-[10px]
+            "
+          >
+            Satellite
+          </div>
+
+          {/* =================================================
+              OPEN GOOGLE MAPS
+          ================================================= */}
+          <a
+            href={googleMapsOpenUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="
+              absolute
+              bottom-3
+              left-3
+              z-10
+
+              inline-flex
+              h-9
+              items-center
+              justify-center
+
+              rounded-full
+
+              border
+              border-white/15
+
+              bg-black/75
+
+              px-4
+
+              text-[10px]
+              font-medium
+              text-white
+
+              backdrop-blur-md
+
+              transition-colors
+              duration-200
+
+              hover:bg-black
+
+              sm:bottom-4
+              sm:left-4
+              sm:h-10
+              sm:px-5
+              sm:text-xs
+            "
+          >
+            Buka di Google Maps
+          </a>
         </div>
       </div>
     </section>
-  );
-}
-
-// =====================================================
-// LOCATION ITEM
-// =====================================================
-function LocationItem({ label, value }) {
-  return (
-    <div className="min-w-0">
-      <p
-        className="
-          text-[10px]
-          text-gray-400
-
-          min-[375px]:text-[11px]
-
-          sm:text-sm
-
-          lg:text-base
-        "
-      >
-        {label}
-      </p>
-
-      <h4
-        className="
-          mt-0.5
-
-          break-words
-
-          text-xs
-          font-semibold
-          leading-5
-          text-white
-
-          min-[375px]:text-sm
-
-          sm:text-base
-
-          lg:mt-0
-        "
-      >
-        {value}
-      </h4>
-    </div>
   );
 }

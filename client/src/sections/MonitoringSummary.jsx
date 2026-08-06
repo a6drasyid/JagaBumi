@@ -188,7 +188,7 @@ export default function MonitoringSummary() {
           <div className="h-full min-w-0">
             <MonitoringCard
               icon={Mountain}
-              title="Kemiringan Lereng"
+              title="Kemiringan"
               value={sensor?.tilt}
               unit="°"
               category={sensor?.tilt_fuzzy}

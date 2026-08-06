@@ -1,34 +1,14 @@
-import L from "leaflet";
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
-
-import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
-import markerIcon from "leaflet/dist/images/marker-icon.png";
-import markerShadow from "leaflet/dist/images/marker-shadow.png";
-
-import "leaflet/dist/leaflet.css";
-
-// =====================================================
-// LEAFLET MARKER ICON
-// Fix Vite / Vercel marker asset 404
-// =====================================================
-const defaultMarkerIcon = L.icon({
-  iconRetinaUrl: markerIcon2x,
-  iconUrl: markerIcon,
-  shadowUrl: markerShadow,
-
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-
-  shadowSize: [41, 41],
-});
-
-// =====================================================
-// LOCATION
-// =====================================================
-const position = [-8.3807, 116.5312]; // Pusuk Sembalun (perkiraan)
-
 export default function LocationSection() {
+  // =====================================================
+  // GOOGLE MAPS
+  // =====================================================
+  const latitude = -8.3807;
+  const longitude = 116.5312;
+
+  const googleMapsEmbedUrl = `https://www.google.com/maps?q=${latitude},${longitude}&z=14&output=embed`;
+
+  const googleMapsOpenUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
+
   return (
     <section
       id="lokasi"
@@ -80,7 +60,6 @@ export default function LocationSection() {
             lg:mb-16
           "
         >
-          {/* LABEL */}
           <p
             className="
               text-[10px]
@@ -101,7 +80,6 @@ export default function LocationSection() {
             Lokasi Penelitian
           </p>
 
-          {/* TITLE */}
           <h2
             className="
               mt-2.5
@@ -111,7 +89,6 @@ export default function LocationSection() {
               text-[1.75rem]
               font-bold
               leading-[1.15]
-              tracking-tight
               text-white
 
               min-[375px]:text-3xl
@@ -126,7 +103,6 @@ export default function LocationSection() {
             Pusuk Sembalun
           </h2>
 
-          {/* DESCRIPTION */}
           <p
             className="
               mx-auto
@@ -155,7 +131,7 @@ export default function LocationSection() {
         </div>
 
         {/* =================================================
-            CONTENT GRID
+            CONTENT
         ================================================= */}
         <div
           className="
@@ -175,7 +151,7 @@ export default function LocationSection() {
           "
         >
           {/* =================================================
-              MAP
+              GOOGLE MAPS
           ================================================= */}
           <div
             className="
@@ -191,18 +167,26 @@ export default function LocationSection() {
               border
               border-white/10
 
+              bg-[#111827]
+
               sm:rounded-3xl
 
               lg:col-span-2
             "
           >
-            <MapContainer
-              center={position}
-              zoom={13}
-              scrollWheelZoom={false}
+            <iframe
+              title="Lokasi Pusuk Sembalun"
+              src={googleMapsEmbedUrl}
+              loading="lazy"
+              allowFullScreen
+              referrerPolicy="no-referrer-when-downgrade"
               className="
+                block
+
                 h-[280px]
                 w-full
+
+                border-0
 
                 min-[375px]:h-[300px]
 
@@ -212,21 +196,55 @@ export default function LocationSection() {
 
                 lg:h-[500px]
               "
-            >
-              <TileLayer
-                attribution="&copy; OpenStreetMap"
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
+            />
 
-              {/* ============================================
-                  MARKER
-                  icon diberikan langsung agar Vite
-                  mengelola asset marker saat build
-              ============================================ */}
-              <Marker position={position} icon={defaultMarkerIcon}>
-                <Popup>Pusuk Sembalun</Popup>
-              </Marker>
-            </MapContainer>
+            {/* =============================================
+                OPEN GOOGLE MAPS
+            ============================================= */}
+            <a
+              href={googleMapsOpenUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="
+                absolute
+
+                bottom-3
+                left-3
+                z-10
+
+                inline-flex
+                h-9
+                items-center
+                justify-center
+
+                rounded-full
+
+                border
+                border-white/10
+
+                bg-black/80
+
+                px-3
+
+                text-[10px]
+                font-medium
+                text-white
+
+                backdrop-blur-md
+
+                hover:bg-black
+
+                min-[375px]:px-4
+                min-[375px]:text-[11px]
+
+                sm:bottom-4
+                sm:left-4
+                sm:h-10
+                sm:text-xs
+              "
+            >
+              Buka di Google Maps
+            </a>
           </div>
 
           {/* =================================================
@@ -260,7 +278,6 @@ export default function LocationSection() {
               lg:p-8
             "
           >
-            {/* TITLE */}
             <h3
               className="
                 break-words
@@ -272,15 +289,14 @@ export default function LocationSection() {
                 min-[375px]:text-xl
 
                 sm:text-2xl
-
-                lg:text-2xl
               "
             >
               Informasi Lokasi
             </h3>
 
             {/* =================================================
-                INFO GRID
+                MOBILE  : 2 KOLOM
+                DESKTOP : 1 KOLOM
             ================================================= */}
             <div
               className="
@@ -303,164 +319,109 @@ export default function LocationSection() {
               "
             >
               {/* LOCATION */}
-              <div className="min-w-0">
-                <p
-                  className="
-                    text-[10px]
-                    text-gray-400
-
-                    min-[375px]:text-[11px]
-
-                    sm:text-sm
-
-                    lg:text-base
-                  "
-                >
-                  Lokasi
-                </p>
-
-                <h4
-                  className="
-                    mt-0.5
-
-                    break-words
-
-                    text-xs
-                    font-semibold
-                    leading-5
-                    text-white
-
-                    min-[375px]:text-sm
-
-                    sm:text-base
-
-                    lg:mt-0
-                  "
-                >
-                  Pusuk Sembalun
-                </h4>
-              </div>
+              <LocationItem label="Lokasi" value="Pusuk Sembalun" />
 
               {/* KABUPATEN */}
-              <div className="min-w-0">
-                <p
-                  className="
-                    text-[10px]
-                    text-gray-400
+              <LocationItem label="Kabupaten" value="Lombok Timur" />
 
-                    min-[375px]:text-[11px]
+              {/* PROVINSI */}
+              <LocationItem label="Provinsi" value="Nusa Tenggara Barat" />
 
-                    sm:text-sm
+              {/* NEGARA */}
+              <LocationItem label="Negara" value="Indonesia" />
+            </div>
 
-                    lg:text-base
-                  "
-                >
-                  Kabupaten
-                </p>
+            {/* =================================================
+                COORDINATE
+            ================================================= */}
+            <div
+              className="
+                mt-6
 
-                <h4
-                  className="
-                    mt-0.5
+                border-t
+                border-white/10
 
-                    break-words
+                pt-5
 
-                    text-xs
-                    font-semibold
-                    leading-5
-                    text-white
+                lg:mt-auto
+                lg:pt-6
+              "
+            >
+              <p
+                className="
+                  text-[10px]
+                  text-gray-500
 
-                    min-[375px]:text-sm
+                  min-[375px]:text-[11px]
 
-                    sm:text-base
+                  sm:text-xs
+                "
+              >
+                Koordinat
+              </p>
 
-                    lg:mt-0
-                  "
-                >
-                  Lombok Timur
-                </h4>
-              </div>
+              <p
+                className="
+                  mt-1
 
-              {/* PROVINCE */}
-              <div className="min-w-0">
-                <p
-                  className="
-                    text-[10px]
-                    text-gray-400
+                  text-xs
+                  font-medium
+                  text-gray-300
 
-                    min-[375px]:text-[11px]
-
-                    sm:text-sm
-
-                    lg:text-base
-                  "
-                >
-                  Provinsi
-                </p>
-
-                <h4
-                  className="
-                    mt-0.5
-
-                    break-words
-
-                    text-xs
-                    font-semibold
-                    leading-5
-                    text-white
-
-                    min-[375px]:text-sm
-
-                    sm:text-base
-
-                    lg:mt-0
-                  "
-                >
-                  Nusa Tenggara Barat
-                </h4>
-              </div>
-
-              {/* COUNTRY */}
-              <div className="min-w-0">
-                <p
-                  className="
-                    text-[10px]
-                    text-gray-400
-
-                    min-[375px]:text-[11px]
-
-                    sm:text-sm
-
-                    lg:text-base
-                  "
-                >
-                  Negara
-                </p>
-
-                <h4
-                  className="
-                    mt-0.5
-
-                    break-words
-
-                    text-xs
-                    font-semibold
-                    leading-5
-                    text-white
-
-                    min-[375px]:text-sm
-
-                    sm:text-base
-
-                    lg:mt-0
-                  "
-                >
-                  Indonesia
-                </h4>
-              </div>
+                  min-[375px]:text-sm
+                "
+              >
+                {latitude}, {longitude}
+              </p>
             </div>
           </div>
         </div>
       </div>
     </section>
+  );
+}
+
+// =====================================================
+// LOCATION ITEM
+// =====================================================
+function LocationItem({ label, value }) {
+  return (
+    <div className="min-w-0">
+      <p
+        className="
+          text-[10px]
+          text-gray-400
+
+          min-[375px]:text-[11px]
+
+          sm:text-sm
+
+          lg:text-base
+        "
+      >
+        {label}
+      </p>
+
+      <h4
+        className="
+          mt-0.5
+
+          break-words
+
+          text-xs
+          font-semibold
+          leading-5
+          text-white
+
+          min-[375px]:text-sm
+
+          sm:text-base
+
+          lg:mt-0
+        "
+      >
+        {value}
+      </h4>
+    </div>
   );
 }

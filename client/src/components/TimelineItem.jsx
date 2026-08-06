@@ -1,5 +1,3 @@
-import { motion } from "framer-motion";
-
 import { BrainCircuit, Clock3, CloudRain, Droplets, Mountain } from "lucide-react";
 
 export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) {
@@ -11,37 +9,26 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
       ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
       : status === "WASPADA"
         ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
-        : "bg-red-500/20 text-red-400 border border-red-500/30";
+        : status === "BAHAYA"
+          ? "bg-red-500/20 text-red-400 border border-red-500/30"
+          : "bg-gray-500/20 text-gray-400 border border-gray-500/30";
 
   // =====================================================
   // TIMELINE DOT
   // =====================================================
   const dotColor =
     status === "AMAN"
-      ? "bg-emerald-400 shadow-emerald-500/50"
+      ? "bg-emerald-400"
       : status === "WASPADA"
-        ? "bg-yellow-400 shadow-yellow-500/50"
-        : "bg-red-500 shadow-red-500/50";
+        ? "bg-yellow-400"
+        : status === "BAHAYA"
+          ? "bg-red-500"
+          : "bg-gray-400";
 
   return (
-    <motion.div
-      initial={{
-        opacity: 0,
-        y: 40,
-      }}
-      whileInView={{
-        opacity: 1,
-        y: 0,
-      }}
-      viewport={{
-        once: true,
-      }}
-      transition={{
-        duration: 0.5,
-      }}
+    <div
       className="
         relative
-
         w-full
         min-w-0
 
@@ -63,18 +50,18 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
       <div
         className="
           absolute
-
           left-[7px]
           top-0
 
           h-full
-          w-[2px]
+          w-px
 
           bg-white/10
 
           min-[375px]:left-[8px]
 
           sm:left-[10px]
+          sm:w-[2px]
 
           lg:left-[14px]
         "
@@ -86,26 +73,25 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
       <div
         className={`
           absolute
-
-          left-0
+          left-[2px]
           top-2
 
-          h-4
-          w-4
+          h-3
+          w-3
 
           rounded-full
 
-          border-[3px]
+          border-2
           border-[#050505]
 
-          shadow-lg
+          min-[375px]:h-3.5
+          min-[375px]:w-3.5
 
-          min-[375px]:h-[18px]
-          min-[375px]:w-[18px]
+          sm:left-[3px]
+          sm:h-4
+          sm:w-4
 
-          sm:h-5
-          sm:w-5
-
+          lg:left-0
           lg:h-7
           lg:w-7
           lg:border-4
@@ -115,7 +101,7 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
       />
 
       {/* =================================================
-          CARD
+          MAIN CARD
       ================================================= */}
       <div
         className="
@@ -123,7 +109,6 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
 
           w-full
           min-w-0
-
           overflow-hidden
 
           rounded-2xl
@@ -132,16 +117,10 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
           border-white/10
 
           bg-white/5
-          backdrop-blur-xl
 
           p-3
 
           shadow-xl
-
-          transition-all
-          duration-300
-
-          hover:shadow-emerald-500/10
 
           min-[375px]:p-3.5
 
@@ -157,77 +136,57 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
         <div
           className="
             flex
-            w-full
             min-w-0
 
             flex-col
 
-            gap-2.5
+            gap-3
 
-            sm:gap-3
+            sm:gap-4
 
             md:flex-row
             md:items-center
             md:justify-between
-
-            lg:gap-4
-          "
+        "
         >
-          {/* =================================================
-              TIME
-          ================================================= */}
+          {/* DATE / TIME */}
           <div
             className="
               flex
               min-w-0
-
-              items-start
+              items-center
 
               gap-2
 
-              sm:items-center
-              sm:gap-2.5
-
-              lg:gap-3
-            "
+              sm:gap-3
+          "
           >
             <Clock3
               className="
-                mt-[1px]
-
-                h-3.5
-                w-3.5
+                h-4
+                w-4
                 shrink-0
 
                 text-emerald-400
 
-                min-[375px]:h-4
-                min-[375px]:w-4
-
-                sm:mt-0
-
-                lg:h-5
-                lg:w-5
+                sm:h-5
+                sm:w-5
               "
             />
 
             <span
               className="
                 min-w-0
-
                 break-words
 
-                text-[9px]
+                text-[10px]
                 font-medium
                 leading-4
-
                 text-gray-300
-
-                min-[360px]:text-[10px]
 
                 min-[375px]:text-[11px]
 
-                sm:text-xs
+                sm:text-sm
                 sm:leading-5
 
                 lg:text-base
@@ -237,9 +196,7 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
             </span>
           </div>
 
-          {/* =================================================
-              STATUS
-          ================================================= */}
+          {/* STATUS */}
           <span
             className={`
               inline-flex
@@ -251,23 +208,19 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
 
               rounded-full
 
-              px-2
+              px-2.5
               py-1
 
               text-[8px]
               font-semibold
               leading-none
 
-              min-[375px]:px-2.5
+              min-[375px]:px-3
               min-[375px]:text-[9px]
 
-              sm:px-3
-              sm:py-1.5
-              sm:text-xs
-
-              lg:px-4
-              lg:py-2
-              lg:text-sm
+              sm:px-4
+              sm:py-2
+              sm:text-sm
 
               ${badge}
             `}
@@ -279,9 +232,9 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
         {/* =================================================
             SENSOR DATA
 
-            MOBILE  : 2 kolom
-            TABLET  : 2 kolom
-            DESKTOP : tetap 4 kolom pada XL
+            MOBILE  : 2 KOLOM
+            TABLET  : 2 KOLOM
+            DESKTOP : 4 KOLOM
         ================================================= */}
         <div
           className="
@@ -297,16 +250,14 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
             sm:mt-6
             sm:gap-4
 
-            md:grid-cols-2
-
             lg:mt-8
-            lg:gap-5
 
             xl:grid-cols-4
+            xl:gap-5
           "
         >
           {/* =================================================
-              RAIN
+              CURAH HUJAN
           ================================================= */}
           <div
             className="
@@ -321,10 +272,6 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
 
               p-2.5
 
-              transition
-
-              hover:bg-white/10
-
               min-[375px]:p-3
 
               sm:rounded-2xl
@@ -335,7 +282,6 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
               className="
                 flex
                 min-w-0
-
                 items-center
 
                 gap-2
@@ -354,11 +300,8 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
                   min-[375px]:h-[18px]
                   min-[375px]:w-[18px]
 
-                  sm:h-5
-                  sm:w-5
-
-                  lg:h-6
-                  lg:w-6
+                  sm:h-6
+                  sm:w-6
                 "
               />
 
@@ -370,14 +313,11 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
                     text-[7px]
                     uppercase
                     tracking-wide
-
                     text-gray-500
 
                     min-[375px]:text-[8px]
 
-                    sm:text-[10px]
-
-                    lg:text-xs
+                    sm:text-xs
                   "
                 >
                   Curah Hujan
@@ -385,27 +325,24 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
 
                 <h4
                   className="
-                    mt-0.5
+                    mt-1
 
-                    whitespace-nowrap
+                    truncate
 
                     text-sm
                     font-bold
-
                     text-white
 
                     min-[375px]:text-base
 
-                    sm:mt-1
-
-                    lg:text-lg
+                    sm:text-lg
                   "
                 >
                   {rain}
 
                   <span
                     className="
-                      ml-0.5
+                      ml-1
 
                       text-[8px]
                       font-normal
@@ -413,10 +350,7 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
 
                       min-[375px]:text-[9px]
 
-                      sm:ml-1
-                      sm:text-xs
-
-                      lg:text-sm
+                      sm:text-sm
                     "
                   >
                     mm
@@ -427,7 +361,7 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
           </div>
 
           {/* =================================================
-              SOIL
+              KELEMBABAN TANAH
           ================================================= */}
           <div
             className="
@@ -442,10 +376,6 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
 
               p-2.5
 
-              transition
-
-              hover:bg-white/10
-
               min-[375px]:p-3
 
               sm:rounded-2xl
@@ -456,7 +386,6 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
               className="
                 flex
                 min-w-0
-
                 items-center
 
                 gap-2
@@ -475,11 +404,8 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
                   min-[375px]:h-[18px]
                   min-[375px]:w-[18px]
 
-                  sm:h-5
-                  sm:w-5
-
-                  lg:h-6
-                  lg:w-6
+                  sm:h-6
+                  sm:w-6
                 "
               />
 
@@ -491,14 +417,11 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
                     text-[7px]
                     uppercase
                     tracking-wide
-
                     text-gray-500
 
                     min-[375px]:text-[8px]
 
-                    sm:text-[10px]
-
-                    lg:text-xs
+                    sm:text-xs
                   "
                 >
                   Kelembaban
@@ -506,9 +429,9 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
 
                 <h4
                   className="
-                    mt-0.5
+                    mt-1
 
-                    whitespace-nowrap
+                    truncate
 
                     text-sm
                     font-bold
@@ -516,16 +439,14 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
 
                     min-[375px]:text-base
 
-                    sm:mt-1
-
-                    lg:text-lg
+                    sm:text-lg
                   "
                 >
                   {soil}
 
                   <span
                     className="
-                      ml-0.5
+                      ml-1
 
                       text-[8px]
                       font-normal
@@ -533,10 +454,7 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
 
                       min-[375px]:text-[9px]
 
-                      sm:ml-1
-                      sm:text-xs
-
-                      lg:text-sm
+                      sm:text-sm
                     "
                   >
                     %
@@ -547,7 +465,7 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
           </div>
 
           {/* =================================================
-              TILT
+              KEMIRINGAN
           ================================================= */}
           <div
             className="
@@ -562,10 +480,6 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
 
               p-2.5
 
-              transition
-
-              hover:bg-white/10
-
               min-[375px]:p-3
 
               sm:rounded-2xl
@@ -576,7 +490,6 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
               className="
                 flex
                 min-w-0
-
                 items-center
 
                 gap-2
@@ -595,11 +508,8 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
                   min-[375px]:h-[18px]
                   min-[375px]:w-[18px]
 
-                  sm:h-5
-                  sm:w-5
-
-                  lg:h-6
-                  lg:w-6
+                  sm:h-6
+                  sm:w-6
                 "
               />
 
@@ -611,14 +521,11 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
                     text-[7px]
                     uppercase
                     tracking-wide
-
                     text-gray-500
 
                     min-[375px]:text-[8px]
 
-                    sm:text-[10px]
-
-                    lg:text-xs
+                    sm:text-xs
                   "
                 >
                   Kemiringan
@@ -626,9 +533,9 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
 
                 <h4
                   className="
-                    mt-0.5
+                    mt-1
 
-                    whitespace-nowrap
+                    truncate
 
                     text-sm
                     font-bold
@@ -636,16 +543,14 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
 
                     min-[375px]:text-base
 
-                    sm:mt-1
-
-                    lg:text-lg
+                    sm:text-lg
                   "
                 >
                   {tilt}
 
                   <span
                     className="
-                      ml-0.5
+                      ml-1
 
                       text-[8px]
                       font-normal
@@ -653,10 +558,7 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
 
                       min-[375px]:text-[9px]
 
-                      sm:ml-1
-                      sm:text-xs
-
-                      lg:text-sm
+                      sm:text-sm
                     "
                   >
                     °
@@ -667,7 +569,7 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
           </div>
 
           {/* =================================================
-              FUZZY
+              NILAI FUZZY
           ================================================= */}
           <div
             className="
@@ -682,10 +584,6 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
 
               p-2.5
 
-              transition
-
-              hover:bg-white/10
-
               min-[375px]:p-3
 
               sm:rounded-2xl
@@ -696,7 +594,6 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
               className="
                 flex
                 min-w-0
-
                 items-center
 
                 gap-2
@@ -715,11 +612,8 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
                   min-[375px]:h-[18px]
                   min-[375px]:w-[18px]
 
-                  sm:h-5
-                  sm:w-5
-
-                  lg:h-6
-                  lg:w-6
+                  sm:h-6
+                  sm:w-6
                 "
               />
 
@@ -731,14 +625,11 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
                     text-[7px]
                     uppercase
                     tracking-wide
-
                     text-gray-500
 
                     min-[375px]:text-[8px]
 
-                    sm:text-[10px]
-
-                    lg:text-xs
+                    sm:text-xs
                   "
                 >
                   Nilai Fuzzy
@@ -746,7 +637,9 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
 
                 <h4
                   className="
-                    mt-0.5
+                    mt-1
+
+                    truncate
 
                     text-sm
                     font-bold
@@ -754,9 +647,7 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
 
                     min-[375px]:text-base
 
-                    sm:mt-1
-
-                    lg:text-lg
+                    sm:text-lg
                   "
                 >
                   {fuzzy}
@@ -766,6 +657,6 @@ export default function TimelineItem({ time, rain, soil, tilt, fuzzy, status }) 
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

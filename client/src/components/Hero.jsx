@@ -54,6 +54,12 @@ export default function Hero() {
     >
       {/* =================================================
           BACKGROUND IMAGE
+
+          Saat web pertama dibuka:
+          scale 1.15 -> scale 1
+
+          Efek:
+          zoom-in awal -> zoom-out -> berhenti
       ================================================= */}
       <div
         className="
@@ -69,31 +75,45 @@ export default function Hero() {
           w-full
 
           overflow-hidden
+
+          bg-[#050505]
         "
         aria-hidden="true"
       >
-        <img
+        <motion.img
           src={heroImage}
           alt=""
           draggable="false"
+          initial={{
+            scale: 1.12,
+          }}
+          animate={{
+            scale: 1,
+          }}
+          transition={{
+            duration: 12,
+            ease: [0.25, 0.1, 0.25, 1],
+          }}
           className="
-            absolute
-            inset-0
+    absolute
+    inset-0
 
-            block
+    block
 
-            h-full
-            min-h-full
+    h-full
+    min-h-full
 
-            w-full
-            min-w-full
-            max-w-none
+    w-full
+    min-w-full
+    max-w-none
 
-            select-none
+    select-none
 
-            object-cover
-            object-center
-          "
+    object-cover
+    object-center
+
+    will-change-transform
+  "
         />
       </div>
 
@@ -322,8 +342,6 @@ export default function Hero() {
 
           {/* =================================================
               HEADING
-
-              Leading dan tracking dibuat lebih lega.
           ================================================= */}
           <motion.h1
             initial={{
@@ -512,10 +530,10 @@ export default function Hero() {
 
               MOBILE:
               - Kedua tombol sama panjang.
-              - Maksimal 250px agar tidak terlalu lebar.
+              - Maksimal 250px.
 
               TABLET / DESKTOP:
-              - Kedua tombol tepat 190px.
+              - Kedua tombol 190px.
           ================================================= */}
           <motion.div
             initial={{

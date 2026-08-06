@@ -91,17 +91,30 @@ video {
 .glass-card {
   position: relative;
   overflow: hidden;
+
   border-radius: 24px;
+
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
   background: rgba(255, 255, 255, 0.05);
+
   border: 1px solid rgba(255, 255, 255, 0.08);
-  transition: all 0.35s ease;
+
+  transition: box-shadow 0.35s ease;
 }
 
+/*
+  Hover tetap mempertahankan glow/shadow.
+  Card TIDAK bergerak ke atas.
+*/
 .glass-card:hover {
-  transform: translateY(-8px);
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
 }
+
+/* =========================================
+   GLASS LIGHT EFFECT
+========================================= */
 
 .glass-card::before {
   content: "";
@@ -118,7 +131,11 @@ video {
 
   transform: rotate(25deg);
 
-  transition: 1.2s;
+  transition:
+    top 1.2s ease,
+    left 1.2s ease;
+
+  pointer-events: none;
 }
 
 .glass-card:hover::before {
@@ -156,6 +173,7 @@ video {
   border: 1px solid rgba(255, 255, 255, 0.15);
 
   backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 
   transition: 0.35s;
 }
@@ -198,6 +216,8 @@ video {
   -webkit-mask-composite: xor;
 
   mask-composite: exclude;
+
+  pointer-events: none;
 }
 
 @keyframes borderMove {
@@ -216,7 +236,7 @@ video {
 
 @keyframes floating {
   0% {
-    transform: translateY(0px);
+    transform: translateY(0);
   }
 
   50% {
@@ -224,7 +244,7 @@ video {
   }
 
   100% {
-    transform: translateY(0px);
+    transform: translateY(0);
   }
 }
 
@@ -249,13 +269,11 @@ video {
 @keyframes live {
   0% {
     transform: scale(0.8);
-
     opacity: 0.6;
   }
 
   70% {
     transform: scale(1.5);
-
     opacity: 0;
   }
 
@@ -280,6 +298,8 @@ video {
   background: #10b981;
 
   animation: live 2s infinite;
+
+  pointer-events: none;
 }
 
 /* =========================================
@@ -289,13 +309,11 @@ video {
 @keyframes fadeUp {
   from {
     opacity: 0;
-
     transform: translateY(40px);
   }
 
   to {
     opacity: 1;
-
     transform: translateY(0);
   }
 }
@@ -324,6 +342,7 @@ video {
   background: linear-gradient(90deg, #10b981, #34d399, #ffffff);
 
   -webkit-background-clip: text;
+  background-clip: text;
 
   color: transparent;
 }
@@ -354,17 +373,15 @@ video {
 
 .section {
   padding-top: 120px;
-
   padding-bottom: 120px;
 }
 
 /* =========================================
-   LOADER (optional)
+   LOADER
 ========================================= */
 
 .loader {
   width: 60px;
-
   height: 60px;
 
   border-radius: 50%;

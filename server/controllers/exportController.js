@@ -28,6 +28,19 @@ function formatDate(value) {
   return new Date(value).toLocaleString("id-ID");
 }
 
+function getExportDateTime() {
+  return new Intl.DateTimeFormat("id-ID", {
+    timeZone: "Asia/Makassar",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  }).format(new Date());
+}
+
 function getStatusColor(status) {
   switch (String(status || "").toUpperCase()) {
     case "AMAN":
@@ -163,7 +176,7 @@ exportController.exportExcel = async (req, res) => {
 
       worksheet.getCell("A3").value = "Tanggal Export";
 
-      worksheet.getCell("B3").value = new Date().toLocaleString("id-ID");
+      worksheet.getCell("B3").value = getExportDateTime();
 
       worksheet.getCell("A4").value = "Filter";
 
@@ -750,7 +763,7 @@ exportController.exportPDF = async (req, res) => {
 
       doc.font("Helvetica").fontSize(10).fillColor("#000000");
 
-      doc.text(`Tanggal Export : ${new Date().toLocaleString("id-ID")}`);
+      doc.text(`Tanggal Export : ${getExportDateTime()}`);
 
       doc.text(`Filter         : ${filterLabel}`);
 

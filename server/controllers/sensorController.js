@@ -235,9 +235,6 @@ ${status}
 🌱 Kelembaban Tanah : ${soil} % (${soil_fuzzy})
 📐 Kemiringan Lereng: ${tilt}° (${tilt_fuzzy})
 ━━━━━━━━━━━━━━━━━━━━━━
-🕒 Waktu
-${new Date().toLocaleString("id-ID")}
-━━━━━━━━━━━━━━━━━━━━━━
 ${
   status === "AMAN"
     ? `🟢 *KONDISI AMAN*

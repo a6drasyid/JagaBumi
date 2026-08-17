@@ -2,155 +2,387 @@ const ExcelJS = require("exceljs");
 const PDFDocument = require("pdfkit");
 const Sensor = require("../models/sensorModel");
 
-const exportController = {
-  // =====================================
-  // EXPORT EXCEL
-  // =====================================
-  exportExcel: async (req, res) => {
-    const { start, end } = req.query;
+const exportController = {};
 
-    try {
-      Sensor.getExportData(start, end, async (err, result) => {
-        if (err) {
-          return res.status(500).json({
-            message: "Gagal mengambil data export.",
-            error: err.message,
-          });
-        }
+// =====================================================
+// HELPER
+// =====================================================
 
-        const workbook = new ExcelJS.Workbook();
+function getFilterLabel(range, start, end) {
+  if (start && end) {
+    return `${start} s/d ${end}`;
+  }
 
-        workbook.creator = "Landslide Monitoring System";
-        workbook.created = new Date();
+  if (range === "1d") {
+    return "24 Jam Terakhir";
+  }
 
-        const worksheet = workbook.addWorksheet("Monitoring");
+  return "1 Jam Terakhir";
+}
 
-        // =====================================
-        // JUDUL LAPORAN
-        // =====================================
+function formatDate(value) {
+  if (!value) {
+    return "-";
+  }
 
-        worksheet.mergeCells("A1:G1");
+  return new Date(value).toLocaleString("id-ID");
+}
 
-        const titleCell = worksheet.getCell("A1");
+function getStatusColor(status) {
+  switch (String(status || "").toUpperCase()) {
+    case "AMAN":
+      return {
+        fill: "#C6EFCE",
+        text: "#006100",
+      };
 
-        titleCell.value = "LAPORAN MONITORING SISTEM PERINGATAN DINI LONGSOR";
+    case "WASPADA":
+      return {
+        fill: "#FFF2CC",
+        text: "#9C6500",
+      };
 
-        titleCell.font = {
-          name: "Calibri",
-          size: 20,
-          bold: true,
+    case "BAHAYA":
+      return {
+        fill: "#F8CBAD",
+        text: "#9C0006",
+      };
+
+    default:
+      return {
+        fill: "#FFFFFF",
+        text: "#000000",
+      };
+  }
+}
+
+// =====================================================
+// EXPORT EXCEL
+// =====================================================
+
+// =====================================================
+// EXPORT EXCEL
+// =====================================================
+
+exportController.exportExcel = async (req, res) => {
+  const { range = "1h", start, end } = req.query;
+
+  try {
+    Sensor.getExportData(range, start, end, async (err, result) => {
+      if (err) {
+        return res.status(500).json({
+          success: false,
+          message: "Gagal mengambil data export.",
+          error: err.message,
+        });
+      }
+
+      // =================================================
+      // WORKBOOK
+      // =================================================
+
+      const workbook = new ExcelJS.Workbook();
+
+      workbook.creator = "JagaBumi";
+      workbook.lastModifiedBy = "JagaBumi";
+      workbook.created = new Date();
+      workbook.modified = new Date();
+
+      const worksheet = workbook.addWorksheet("Monitoring");
+
+      // =================================================
+      // WARNA
+      // =================================================
+
+      const COLORS = {
+        blue: "1F4E78",
+        white: "FFFFFF",
+        black: "000000",
+        gray: "666666",
+        border: "B7B7B7",
+
+        amanFill: "C6EFCE",
+        amanText: "006100",
+
+        waspadaFill: "FFF2CC",
+        waspadaText: "9C6500",
+
+        bahayaFill: "F4CCCC",
+        bahayaText: "9C0006",
+      };
+
+      // =================================================
+      // FILTER LABEL
+      // =================================================
+
+      let filterLabel = "1 Jam Terakhir";
+
+      if (start && end) {
+        filterLabel = `${start} s/d ${end}`;
+      } else if (range === "1d") {
+        filterLabel = "24 Jam Terakhir";
+      }
+
+      // =================================================
+      // JUDUL
+      // =================================================
+
+      worksheet.mergeCells("A1:G1");
+
+      const title = worksheet.getCell("A1");
+
+      title.value = "LAPORAN MONITORING SISTEM PERINGATAN DINI LONGSOR";
+
+      title.font = {
+        name: "Arial",
+        size: 16,
+        bold: true,
+        color: {
+          argb: COLORS.white,
+        },
+      };
+
+      title.alignment = {
+        horizontal: "center",
+        vertical: "middle",
+      };
+
+      title.fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: {
+          argb: COLORS.blue,
+        },
+      };
+
+      worksheet.getRow(1).height = 30;
+
+      // =================================================
+      // INFORMASI
+      // =================================================
+
+      worksheet.getCell("A3").value = "Tanggal Export";
+
+      worksheet.getCell("B3").value = new Date().toLocaleString("id-ID");
+
+      worksheet.getCell("A4").value = "Filter";
+
+      worksheet.getCell("B4").value = filterLabel;
+
+      worksheet.getCell("A5").value = "Lokasi";
+
+      worksheet.getCell("B5").value = "Pusuk Sembalun, Kabupaten Lombok Timur";
+
+      // Style informasi
+
+      ["A3", "A4", "A5"].forEach((cellAddress) => {
+        const cell = worksheet.getCell(cellAddress);
+
+        cell.font = {
+          name: "Arial",
+          size: 10,
+          bold: false,
           color: {
-            argb: "FFFFFF",
+            argb: COLORS.black,
           },
         };
 
-        titleCell.alignment = {
-          horizontal: "center",
+        cell.alignment = {
           vertical: "middle",
         };
+      });
 
-        titleCell.fill = {
+      ["B3", "B4", "B5"].forEach((cellAddress) => {
+        const cell = worksheet.getCell(cellAddress);
+
+        cell.font = {
+          name: "Arial",
+          size: 10,
+          color: {
+            argb: COLORS.black,
+          },
+        };
+
+        cell.alignment = {
+          vertical: "middle",
+        };
+      });
+
+      // =================================================
+      // RINGKASAN MONITORING
+      // =================================================
+
+      worksheet.getCell("A7").value = "RINGKASAN MONITORING";
+
+      worksheet.mergeCells("A7:G7");
+
+      const summaryTitle = worksheet.getCell("A7");
+
+      summaryTitle.font = {
+        name: "Arial",
+        size: 12,
+        bold: true,
+        color: {
+          argb: COLORS.black,
+        },
+      };
+
+      summaryTitle.alignment = {
+        vertical: "middle",
+      };
+
+      // =================================================
+      // STATISTIK
+      // =================================================
+
+      const totalData = result.length;
+
+      const avgRain =
+        totalData > 0
+          ? (result.reduce((sum, item) => sum + Number(item.rain || 0), 0) / totalData).toFixed(2)
+          : "0.00";
+
+      const avgSoil =
+        totalData > 0
+          ? (result.reduce((sum, item) => sum + Number(item.soil || 0), 0) / totalData).toFixed(2)
+          : "0.00";
+
+      const avgTilt =
+        totalData > 0
+          ? (result.reduce((sum, item) => sum + Number(item.tilt || 0), 0) / totalData).toFixed(2)
+          : "0.00";
+
+      const lastStatus = totalData > 0 ? result[result.length - 1].status || "-" : "-";
+
+      // =================================================
+      // SUMMARY ROW
+      // =================================================
+
+      const summary = [
+        ["Jumlah Data", totalData],
+        ["Status Terakhir", lastStatus],
+        ["Rata-rata Curah Hujan", `${avgRain} mm`],
+        ["Rata-rata Kelembaban", `${avgSoil} %`],
+        ["Rata-rata Kemiringan", `${avgTilt}°`],
+      ];
+
+      summary.forEach(([label, value], index) => {
+        const rowNumber = 8 + index;
+
+        worksheet.getCell(`A${rowNumber}`).value = label;
+
+        worksheet.getCell(`B${rowNumber}`).value = value;
+
+        worksheet.getCell(`A${rowNumber}`).font = {
+          name: "Arial",
+          size: 10,
+        };
+
+        worksheet.getCell(`B${rowNumber}`).font = {
+          name: "Arial",
+          size: 10,
+        };
+      });
+
+      // =================================================
+      // HEADER TABEL
+      // =================================================
+
+      const tableHeaderRow = 14;
+
+      const headerRow = worksheet.getRow(tableHeaderRow);
+
+      headerRow.values = [
+        "No",
+        "Tanggal",
+        "Curah Hujan (mm)",
+        "Kelembaban Tanah (%)",
+        "Kemiringan (°)",
+        "Nilai Fuzzy",
+        "Status",
+      ];
+
+      headerRow.height = 30;
+
+      headerRow.eachCell((cell) => {
+        cell.font = {
+          name: "Arial",
+          size: 10,
+          bold: true,
+          color: {
+            argb: COLORS.white,
+          },
+        };
+
+        cell.fill = {
           type: "pattern",
           pattern: "solid",
           fgColor: {
-            argb: "1F4E78",
+            argb: COLORS.blue,
           },
         };
 
-        // worksheet.getRow(1).height = 32;
-
-        // =====================================
-        // INFORMASI
-        // =====================================
-        const totalData = result.length;
-
-        const avgRain =
-          totalData > 0
-            ? (result.reduce((sum, item) => sum + Number(item.rain), 0) / totalData).toFixed(2)
-            : 0;
-
-        const avgSoil =
-          totalData > 0
-            ? (result.reduce((sum, item) => sum + Number(item.soil), 0) / totalData).toFixed(2)
-            : 0;
-
-        const avgTilt =
-          totalData > 0
-            ? (result.reduce((sum, item) => sum + Number(item.tilt), 0) / totalData).toFixed(2)
-            : 0;
-
-        const lastStatus = totalData > 0 ? result[result.length - 1].status : "-";
-
-        worksheet.getCell("A3").value = "Tanggal Export";
-        worksheet.getCell("B3").value = new Date().toLocaleString("id-ID");
-
-        worksheet.getCell("A4").value = "Filter";
-
-        worksheet.getCell("B4").value = start && end ? `${start} s/d ${end}` : "Semua Data";
-
-        // =====================================
-        // RINGKASAN MONITORING
-        // =====================================
-
-        worksheet.getCell("A6").value = "RINGKASAN MONITORING";
-        worksheet.getCell("A6").font = {
-          bold: true,
-          size: 14,
+        cell.alignment = {
+          horizontal: "center",
+          vertical: "middle",
+          wrapText: true,
         };
 
-        worksheet.getCell("A7").value = "Jumlah Data";
-        worksheet.getCell("B7").value = totalData;
-
-        worksheet.getCell("A8").value = "Status Terakhir";
-        worksheet.getCell("B8").value = lastStatus;
-
-        worksheet.getCell("A9").value = "Rata-rata Curah Hujan";
-        worksheet.getCell("B9").value = `${avgRain} mm`;
-
-        worksheet.getCell("A10").value = "Rata-rata Kelembaban";
-        worksheet.getCell("B10").value = `${avgSoil} %`;
-
-        worksheet.getCell("A11").value = "Rata-rata Kemiringan";
-        worksheet.getCell("B11").value = `${avgTilt}°`;
-
-        // =====================================
-        // HEADER
-        // =====================================
-        worksheet.columns = [
-          { key: "no", width: 8 },
-          { key: "created_at", width: 25 },
-          { key: "rain", width: 18 },
-          { key: "soil", width: 22 },
-          { key: "tilt", width: 18 },
-          { key: "fuzzy_value", width: 18 },
-          { key: "status", width: 15 },
-        ];
-
-        const headerRow = worksheet.getRow(13);
-
-        headerRow.values = [
-          "No",
-          "Tanggal",
-          "Curah Hujan (mm)",
-          "Kelembaban Tanah (%)",
-          "Kemiringan (°)",
-          "Nilai Fuzzy",
-          "Status",
-        ];
-
-        headerRow.eachCell((cell) => {
-          cell.font = {
-            bold: true,
+        cell.border = {
+          top: {
+            style: "thin",
             color: {
-              argb: "FFFFFFFF",
+              argb: COLORS.border,
             },
-          };
+          },
+          bottom: {
+            style: "thin",
+            color: {
+              argb: COLORS.border,
+            },
+          },
+          left: {
+            style: "thin",
+            color: {
+              argb: COLORS.border,
+            },
+          },
+          right: {
+            style: "thin",
+            color: {
+              argb: COLORS.border,
+            },
+          },
+        };
+      });
 
-          cell.fill = {
-            type: "pattern",
-            pattern: "solid",
-            fgColor: {
-              argb: "1F4E78",
+      // =================================================
+      // DATA
+      // =================================================
+
+      result.forEach((item, index) => {
+        const rowNumber = tableHeaderRow + 1 + index;
+
+        const row = worksheet.getRow(rowNumber);
+
+        row.values = [
+          index + 1,
+          item.created_at,
+          Number(item.rain || 0),
+          Number(item.soil || 0),
+          Number(item.tilt || 0),
+          Number(item.fuzzy_value || 0),
+          item.status || "-",
+        ];
+
+        row.height = 22;
+
+        row.eachCell((cell) => {
+          cell.font = {
+            name: "Arial",
+            size: 9,
+            color: {
+              argb: COLORS.black,
             },
           };
 
@@ -158,410 +390,576 @@ const exportController = {
             horizontal: "center",
             vertical: "middle",
           };
+
+          cell.border = {
+            top: {
+              style: "thin",
+              color: {
+                argb: COLORS.border,
+              },
+            },
+            bottom: {
+              style: "thin",
+              color: {
+                argb: COLORS.border,
+              },
+            },
+            left: {
+              style: "thin",
+              color: {
+                argb: COLORS.border,
+              },
+            },
+            right: {
+              style: "thin",
+              color: {
+                argb: COLORS.border,
+              },
+            },
+          };
         });
 
-        // =====================================
-        // DATA
-        // =====================================
-        result.forEach((item, index) => {
-          const formattedDate = new Date(item.created_at).toLocaleString("id-ID");
+        // =================================================
+        // FORMAT ANGKA
+        // =================================================
 
-          worksheet.insertRow(14 + index, [
-            index + 1,
-            formattedDate,
-            item.rain,
-            item.soil,
-            item.tilt,
-            item.fuzzy_value,
-            item.status,
-          ]);
+        row.getCell(3).numFmt = "0.00";
 
-          const row = worksheet.lastRow;
+        row.getCell(4).numFmt = "0.00";
 
-          // row.getCell(2).numFmt = "dd-mm-yyyy hh:mm:ss";
+        row.getCell(5).numFmt = "0.00";
 
-          const statusCell = row.getCell(7);
+        row.getCell(6).numFmt = "0.00";
 
-          switch (item.status) {
-            case "AMAN":
-              statusCell.fill = {
-                type: "pattern",
-                pattern: "solid",
-                fgColor: {
-                  argb: "C6EFCE",
-                },
-              };
-              break;
+        // =================================================
+        // FORMAT TANGGAL
+        // =================================================
 
-            case "WASPADA":
-              statusCell.fill = {
-                type: "pattern",
-                pattern: "solid",
-                fgColor: {
-                  argb: "FFF2CC",
-                },
-              };
-              break;
+        row.getCell(2).numFmt = "dd/mm/yyyy hh:mm:ss";
 
-            case "BAHAYA":
-              statusCell.fill = {
-                type: "pattern",
-                pattern: "solid",
-                fgColor: {
-                  argb: "F8CBAD",
-                },
-              };
-              break;
-          }
+        // =================================================
+        // WARNA STATUS
+        // =================================================
+
+        const status = String(item.status || "").toUpperCase();
+
+        const statusCell = row.getCell(7);
+
+        if (status === "AMAN") {
+          statusCell.fill = {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: {
+              argb: COLORS.amanFill,
+            },
+          };
+
+          statusCell.font = {
+            name: "Arial",
+            size: 9,
+            bold: true,
+            color: {
+              argb: COLORS.amanText,
+            },
+          };
+        }
+
+        if (status === "WASPADA") {
+          statusCell.fill = {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: {
+              argb: COLORS.waspadaFill,
+            },
+          };
+
+          statusCell.font = {
+            name: "Arial",
+            size: 9,
+            bold: true,
+            color: {
+              argb: COLORS.waspadaText,
+            },
+          };
+        }
+
+        if (status === "BAHAYA") {
+          statusCell.fill = {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: {
+              argb: COLORS.bahayaFill,
+            },
+          };
+
+          statusCell.font = {
+            name: "Arial",
+            size: 9,
+            bold: true,
+            color: {
+              argb: COLORS.bahayaText,
+            },
+          };
+        }
+      });
+
+      // =================================================
+      // COLUMN WIDTH
+      // =================================================
+
+      worksheet.getColumn(1).width = 8;
+      worksheet.getColumn(2).width = 24;
+      worksheet.getColumn(3).width = 20;
+      worksheet.getColumn(4).width = 23;
+      worksheet.getColumn(5).width = 18;
+      worksheet.getColumn(6).width = 16;
+      worksheet.getColumn(7).width = 15;
+
+      // =================================================
+      // FREEZE HEADER
+      // =================================================
+
+      worksheet.views = [
+        {
+          state: "frozen",
+          ySplit: tableHeaderRow,
+        },
+      ];
+
+      // =================================================
+      // PRINT SETTINGS
+      // =================================================
+
+      worksheet.pageSetup = {
+        paperSize: worksheet.PAPERSIZE_A4,
+
+        orientation: "landscape",
+
+        fitToPage: true,
+
+        fitToWidth: 1,
+
+        fitToHeight: 0,
+
+        margins: {
+          left: 0.25,
+          right: 0.25,
+          top: 0.5,
+          bottom: 0.5,
+          header: 0.2,
+          footer: 0.2,
+        },
+      };
+
+      worksheet.pageSetup.printTitlesRow = `${tableHeaderRow}:${tableHeaderRow}`;
+
+      // =================================================
+      // PRINT AREA
+      // =================================================
+
+      const lastRow = tableHeaderRow + result.length;
+
+      worksheet.pageSetup.printArea = `A1:G${lastRow}`;
+
+      // =================================================
+      // DOWNLOAD
+      // =================================================
+
+      res.setHeader(
+        "Content-Type",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      );
+
+      res.setHeader("Content-Disposition", 'attachment; filename="Monitoring.xlsx"');
+
+      await workbook.xlsx.write(res);
+
+      res.end();
+    });
+  } catch (error) {
+    console.error("Export Excel Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Export Excel gagal.",
+      error: error.message,
+    });
+  }
+};
+
+// =====================================================
+// EXPORT PDF
+// =====================================================
+
+exportController.exportPDF = async (req, res) => {
+  const { range = "1h", start, end } = req.query;
+
+  try {
+    Sensor.getExportData(range, start, end, (err, result) => {
+      if (err) {
+        return res.status(500).json({
+          success: false,
+          message: "Gagal mengambil data export PDF.",
+          error: err.message,
         });
+      }
 
-        // =====================================
-        // BORDER
-        // =====================================
-        worksheet.eachRow((row) => {
-          row.eachCell((cell) => {
-            cell.border = {
-              top: { style: "thin" },
-              left: { style: "thin" },
-              bottom: { style: "thin" },
-              right: { style: "thin" },
-            };
-          });
-        });
+      // =================================================
+      // DATA STATISTIK
+      // =================================================
 
-        // =====================================
-        // ALIGNMENT
-        // =====================================
-        worksheet.eachRow((row, rowNumber) => {
-          if (rowNumber >= 13) {
-            row.eachCell((cell) => {
-              cell.alignment = {
-                horizontal: "center",
-                vertical: "middle",
-              };
-            });
-          }
-        });
+      const totalData = result.length;
 
-        // =====================================
-        // AUTO FILTER
-        // =====================================
-        worksheet.autoFilter = {
-          from: "13",
-          to: "13",
-        };
+      const avgRain =
+        totalData > 0
+          ? (result.reduce((sum, item) => sum + Number(item.rain || 0), 0) / totalData).toFixed(2)
+          : "0.00";
 
-        // =====================================
-        // FREEZE HEADER
-        // =====================================
-        worksheet.views = [
+      const avgSoil =
+        totalData > 0
+          ? (result.reduce((sum, item) => sum + Number(item.soil || 0), 0) / totalData).toFixed(2)
+          : "0.00";
+
+      const avgTilt =
+        totalData > 0
+          ? (result.reduce((sum, item) => sum + Number(item.tilt || 0), 0) / totalData).toFixed(2)
+          : "0.00";
+
+      const lastStatus = totalData > 0 ? result[result.length - 1].status || "-" : "-";
+
+      // =================================================
+      // FILTER
+      // =================================================
+
+      const filterLabel = getFilterLabel(range, start, end);
+
+      // =================================================
+      // PDF DOCUMENT
+      // =================================================
+
+      const doc = new PDFDocument({
+        size: "A4",
+        margin: 40,
+        bufferPages: true,
+      });
+
+      res.setHeader("Content-Type", "application/pdf");
+
+      res.setHeader("Content-Disposition", 'attachment; filename="Monitoring.pdf"');
+
+      doc.pipe(res);
+
+      // =================================================
+      // KONSTANTA LAYOUT
+      // =================================================
+
+      const pageWidth = doc.page.width;
+      const pageHeight = doc.page.height;
+
+      const left = 40;
+      const right = pageWidth - 40;
+      const tableWidth = right - left;
+
+      // =================================================
+      // FUNGSI HEADER TABEL
+      // =================================================
+
+      function drawTableHeader() {
+        const y = doc.y;
+
+        const headerHeight = 30;
+
+        // Background biru
+        doc.save().fillColor("#1F4E78").rect(left, y, tableWidth, headerHeight).fill().restore();
+
+        // Kolom
+        const columns = [
           {
-            state: "frozen",
-            ySplit: 13,
+            title: "No",
+            x: left,
+            width: 35,
+          },
+          {
+            title: "Tanggal",
+            x: left + 35,
+            width: 120,
+          },
+          {
+            title: "Curah\nHujan\n(mm)",
+            x: left + 155,
+            width: 70,
+          },
+          {
+            title: "Kelembaban\nTanah\n(%)",
+            x: left + 225,
+            width: 80,
+          },
+          {
+            title: "Kemiringan\n(°)",
+            x: left + 305,
+            width: 70,
+          },
+          {
+            title: "Nilai\nFuzzy",
+            x: left + 375,
+            width: 65,
+          },
+          {
+            title: "Status",
+            x: left + 440,
+            width: 75,
           },
         ];
 
-        worksheet.columns.forEach((column) => {
-          let maxLength = 8;
+        doc.font("Helvetica-Bold").fontSize(8);
 
-          column.eachCell({ includeEmpty: true }, (cell) => {
-            const value = cell.value ? cell.value.toString() : "";
-
-            if (value.length > maxLength) {
-              maxLength = value.length;
-            }
+        columns.forEach((column) => {
+          doc.fillColor("#FFFFFF").text(column.title, column.x + 3, y + 6, {
+            width: column.width - 6,
+            height: headerHeight - 6,
+            align: "center",
           });
-
-          // batas minimum
-          if (maxLength < 10) maxLength = 10;
-
-          // batas maksimum
-          if (maxLength > 22) maxLength = 22;
-
-          column.width = maxLength + 2;
         });
 
-        // =====================================
-        // DOWNLOAD
-        // =====================================
-        res.setHeader(
-          "Content-Type",
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        );
+        doc.y = y + headerHeight;
 
-        res.setHeader("Content-Disposition", 'attachment; filename="Monitoring.xlsx"');
+        return columns;
+      }
 
-        await workbook.xlsx.write(res);
+      // =================================================
+      // JUDUL
+      // =================================================
 
-        res.end();
+      doc
+        .font("Helvetica-Bold")
+        .fontSize(18)
+        .fillColor("#000000")
+        .text("LAPORAN MONITORING SISTEM PERINGATAN DINI", {
+          align: "center",
+        });
+
+      doc.font("Helvetica-Bold").fontSize(18).text("LONGSOR", {
+        align: "center",
       });
-    } catch (error) {
-      res.status(500).json({
-        message: "Export Excel gagal.",
-        error: error.message,
-      });
-    }
-  },
 
-  // =====================================
-  // EXPORT PDF
-  // =====================================
-  exportPDF: async (req, res) => {
-    const { start, end } = req.query;
+      doc.moveDown(1.5);
 
-    try {
-      Sensor.getExportData(start, end, (err, result) => {
-        if (err) {
-          return res.status(500).json({
-            message: "Gagal mengambil data export PDF.",
-            error: err.message,
-          });
+      // =================================================
+      // INFORMASI EXPORT
+      // =================================================
+
+      doc.font("Helvetica").fontSize(10).fillColor("#000000");
+
+      doc.text(`Tanggal Export : ${new Date().toLocaleString("id-ID")}`);
+
+      doc.text(`Filter         : ${filterLabel}`);
+
+      doc.text("Lokasi         : Pusuk Sembalun, Kabupaten Lombok Timur");
+
+      doc.moveDown(1);
+
+      // =================================================
+      // RINGKASAN
+      // =================================================
+
+      doc.font("Helvetica-Bold").fontSize(13).text("RINGKASAN MONITORING");
+
+      doc.moveDown(0.5);
+
+      doc.font("Helvetica").fontSize(10).fillColor("#000000");
+
+      doc.text(`Jumlah Data          : ${totalData}`);
+
+      doc.text(`Status Terakhir      : ${lastStatus}`);
+
+      doc.text(`Rata-rata Curah Hujan: ${avgRain} mm`);
+
+      doc.text(`Rata-rata Kelembaban : ${avgSoil} %`);
+
+      doc.text(`Rata-rata Kemiringan : ${avgTilt}°`);
+
+      doc.moveDown(1);
+
+      // =================================================
+      // GARIS PEMBATAS
+      // =================================================
+
+      doc.moveTo(left, doc.y).lineTo(right, doc.y).lineWidth(1).strokeColor("#333333").stroke();
+
+      doc.moveDown(0.8);
+
+      // =================================================
+      // HEADER TABEL
+      // =================================================
+
+      drawTableHeader();
+
+      // =================================================
+      // DATA TABLE
+      // =================================================
+
+      const rowHeight = 22;
+
+      result.forEach((item, index) => {
+        // ===============================================
+        // CEK HALAMAN
+        // ===============================================
+
+        if (doc.y + rowHeight > pageHeight - 45) {
+          doc.addPage();
+
+          doc.y = 40;
+
+          drawTableHeader();
         }
-        const totalData = result.length;
 
-        const avgRain =
-          totalData > 0
-            ? (result.reduce((sum, item) => sum + Number(item.rain), 0) / totalData).toFixed(2)
-            : 0;
+        const y = doc.y;
 
-        const avgSoil =
-          totalData > 0
-            ? (result.reduce((sum, item) => sum + Number(item.soil), 0) / totalData).toFixed(2)
-            : 0;
+        // ===============================================
+        // KOLOM
+        // ===============================================
 
-        const avgTilt =
-          totalData > 0
-            ? (result.reduce((sum, item) => sum + Number(item.tilt), 0) / totalData).toFixed(2)
-            : 0;
+        const columns = [
+          {
+            x: left,
+            width: 35,
+          },
+          {
+            x: left + 35,
+            width: 120,
+          },
+          {
+            x: left + 155,
+            width: 70,
+          },
+          {
+            x: left + 225,
+            width: 80,
+          },
+          {
+            x: left + 305,
+            width: 70,
+          },
+          {
+            x: left + 375,
+            width: 65,
+          },
+          {
+            x: left + 440,
+            width: 75,
+          },
+        ];
 
-        const lastStatus = totalData > 0 ? result[result.length - 1].status : "-";
-        // =====================================
-        // BUAT PDF
-        // =====================================
-        const doc = new PDFDocument({
-          margin: 40,
-          size: "A4",
-          bufferPages: true,
-        });
+        // ===============================================
+        // WARNA STATUS
+        // ===============================================
 
-        const startX = 40;
+        const statusColor = getStatusColor(item.status);
 
-        const headerHeight = 42;
-        const rowHeight = 24;
+        // ===============================================
+        // BACKGROUND STATUS
+        // ===============================================
 
-        const col = {
-          no: 40,
-          tanggal: 130,
-          rain: 60,
-          soil: 75,
-          tilt: 55,
-          fuzzy: 65,
-          status: 80,
-        };
-
-        res.setHeader("Content-Type", "application/pdf");
-
-        res.setHeader("Content-Disposition", 'attachment; filename="Monitoring.pdf"');
-
-        doc.pipe(res);
-
-        // =====================================
-        // JUDUL
-        // =====================================
         doc
-          .fontSize(18)
-          .font("Helvetica-Bold")
-          .text("LAPORAN MONITORING SISTEM PERINGATAN DINI LONGSOR", {
-            align: "center",
-          });
+          .save()
+          .fillColor(statusColor.fill)
+          .rect(columns[6].x, y, columns[6].width, rowHeight)
+          .fill()
+          .restore();
 
-        doc.moveDown(1.5);
+        // ===============================================
+        // GARIS TABEL
+        // ===============================================
 
-        // =====================================
-        // INFORMASI
-        // =====================================
-        doc.font("Helvetica").fontSize(11);
-
-        doc.text(`Tanggal Export : ${new Date().toLocaleString("id-ID")}`);
-
-        doc.text(`Filter : ${start && end ? `${start} s/d ${end}` : "Semua Data"}`);
-
-        doc.text("Lokasi : Pusuk Sembalun, Kabupaten Lombok Timur");
-
-        doc.moveDown();
-
-        // =====================================
-        // RINGKASAN
-        // =====================================
-        doc.font("Helvetica-Bold").fontSize(13).text("RINGKASAN MONITORING");
-
-        doc.moveDown(0.5);
-
-        doc.font("Helvetica").fontSize(11);
-
-        doc.text(`Jumlah Data             : ${totalData}`);
-
-        doc.text(`Status Terakhir         : ${lastStatus}`);
-
-        doc.text(`Rata-rata Curah Hujan   : ${avgRain} mm`);
-
-        doc.text(`Rata-rata Kelembaban    : ${avgSoil} %`);
-
-        doc.text(`Rata-rata Kemiringan    : ${avgTilt}°`);
-
-        doc.moveDown(2);
-
-        // // =====================================
-        // // INFORMASI
-        // // =====================================
-        // doc.fontSize(11).font("Helvetica");
-
-        // doc.text(`Tanggal Export : ${new Date().toLocaleString("id-ID")}`);
-
-        // doc.text("Lokasi : Pusuk Sembalun, Kabupaten Lombok Timur");
-
-        // doc.text(`Filter : ${start && end ? `${start} s/d ${end}` : "Semua Data"}`);
-
-        // doc.moveDown();
-
-        // doc.moveDown();
-
-        let y = doc.y + 10;
-        // =====================================
-        // HEADER TABEL
-        // =====================================
-        drawTableHeader(y);
-        y += headerHeight;
-        function drawTableHeader(y) {
-          doc.rect(startX, y, 505, headerHeight).fill("#1F4E78");
-
-          doc.fillColor("white");
-          doc.font("Helvetica-Bold");
-          doc.fontSize(10);
-
-          let x = startX;
-
-          const headers = [
-            { text: "No", width: col.no },
-            { text: "Tanggal", width: col.tanggal },
-            { text: "Curah\nHujan\n(mm)", width: col.rain },
-            { text: "Kelembaban\nTanah\n(%)", width: col.soil },
-            { text: "Kemiringan\n(°)", width: col.tilt },
-            { text: "Nilai\nFuzzy", width: col.fuzzy },
-            { text: "Status", width: col.status },
-          ];
-
-          headers.forEach((h) => {
-            doc.text(h.text, x, y + 6, {
-              width: h.width,
-              align: "center",
-              lineGap: 1,
-            });
-
-            x += h.width;
-          });
-
-          doc.fillColor("black");
-        }
-
-        doc.font("Helvetica");
-
-        // =====================================
-        // DATA
-        // =====================================
-        result.forEach((item, index) => {
-          if (y > 730) {
-            doc.addPage();
-
-            y = 50;
-
-            drawTableHeader(y);
-
-            y += headerHeight;
-          }
-
-          doc.rect(startX, y, 505, rowHeight).stroke("#D1D5DB");
-
-          let x = startX;
-
-          doc.font("Helvetica").fontSize(9);
-
-          doc.text(index + 1, x, y + 7, {
-            width: col.no,
-            align: "center",
-          });
-
-          x += col.no;
-
-          doc.text(new Date(item.created_at).toLocaleString("id-ID"), x, y + 7, {
-            width: col.tanggal,
-            align: "center",
-          });
-
-          x += col.tanggal;
-
-          doc.text(String(item.rain), x, y + 7, {
-            width: col.rain,
-            align: "center",
-          });
-
-          x += col.rain;
-
-          doc.text(String(item.soil), x, y + 7, {
-            width: col.soil,
-            align: "center",
-          });
-
-          x += col.soil;
-
-          doc.text(String(item.tilt), x, y + 7, {
-            width: col.tilt,
-            align: "center",
-          });
-
-          x += col.tilt;
-
-          doc.text(String(item.fuzzy_value), x, y + 7, {
-            width: col.fuzzy,
-            align: "center",
-          });
-
-          x += col.fuzzy;
-
-          // warna status
-          switch (item.status) {
-            case "AMAN":
-              doc.fillColor("#16A34A");
-              break;
-            case "WASPADA":
-              doc.fillColor("#CA8A04");
-              break;
-            case "BAHAYA":
-              doc.fillColor("#DC2626");
-              break;
-            default:
-              doc.fillColor("black");
-          }
-
-          doc.text(item.status, x, y + 7, {
-            width: col.status,
-            align: "center",
-          });
-
-          doc.fillColor("black");
-
-          y += rowHeight;
+        columns.forEach((column) => {
+          doc
+            .save()
+            .lineWidth(0.5)
+            .strokeColor("#D0D0D0")
+            .rect(column.x, y, column.width, rowHeight)
+            .stroke()
+            .restore();
         });
 
-        doc.end();
+        // ===============================================
+        // DATA
+        // ===============================================
+
+        const createdAt = formatDate(item.created_at);
+
+        const values = [
+          index + 1,
+          createdAt,
+          item.rain ?? "-",
+          item.soil ?? "-",
+          item.tilt ?? "-",
+          item.fuzzy_value ?? "-",
+          item.status ?? "-",
+        ];
+
+        values.forEach((value, columnIndex) => {
+          const column = columns[columnIndex];
+
+          const isStatus = columnIndex === 6;
+
+          doc
+            .font(isStatus ? "Helvetica-Bold" : "Helvetica")
+            .fontSize(8)
+            .fillColor(isStatus ? statusColor.text : "#000000")
+            .text(String(value), column.x + 3, y + 7, {
+              width: column.width - 6,
+              height: rowHeight - 5,
+              align: "center",
+              lineBreak: false,
+            });
+        });
+
+        doc.y = y + rowHeight;
       });
-    } catch (error) {
-      res.status(500).json({
-        message: "Export PDF gagal.",
-        error: error.message,
-      });
-    }
-  },
+
+      // // =================================================
+      // // FOOTER
+      // // =================================================
+
+      // const rangeCount = doc.bufferedPageRange();
+
+      // for (let page = rangeCount.start; page < rangeCount.start + rangeCount.count; page++) {
+      //   doc.switchToPage(page);
+
+      //   doc
+      //     .font("Helvetica")
+      //     .fontSize(8)
+      //     .fillColor("#777777")
+      //     .text(
+      //       `JagaBumi • Sistem Peringatan Dini Longsor • Halaman ${page + 1}`,
+      //       left,
+      //       pageHeight - 25,
+      //       {
+      //         width: tableWidth,
+      //         align: "center",
+      //       }
+      //     );
+      // }
+
+      // =================================================
+      // SELESAI
+      // =================================================
+
+      doc.end();
+    });
+  } catch (error) {
+    console.error("Export PDF Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Export PDF gagal.",
+      error: error.message,
+    });
+  }
 };
+
+// =====================================================
+// EXPORT CONTROLLER
+// =====================================================
 
 module.exports = exportController;

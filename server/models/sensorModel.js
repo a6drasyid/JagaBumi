@@ -6,34 +6,34 @@ const Sensor = {
   // =====================================
   getLatest(date, callback) {
     let sql = `
-    SELECT
-      rain_tip,
-      rain,
-      rain_fuzzy,
-      soil,
-      soil_fuzzy,
-      tilt,
-      tilt_fuzzy,
-      fuzzy_value,
-      status,
-      created_at
-    FROM sensor_data
-  `;
+      SELECT
+        rain_tip,
+        rain,
+        rain_fuzzy,
+        soil,
+        soil_fuzzy,
+        tilt,
+        tilt_fuzzy,
+        fuzzy_value,
+        status,
+        created_at
+      FROM sensor_data
+    `;
 
     const params = [];
 
     if (date) {
       sql += `
-      WHERE DATE(created_at) = ?
-    `;
+        WHERE DATE(created_at) = ?
+      `;
 
       params.push(date);
     }
 
     sql += `
-    ORDER BY created_at DESC
-    LIMIT 1
-  `;
+      ORDER BY created_at DESC
+      LIMIT 1
+    `;
 
     db.query(sql, params, callback);
   },
@@ -46,42 +46,45 @@ const Sensor = {
 
     switch (range) {
       // =====================================
-      // 1 JAM (RAW DATA)
+      // 1 JAM
       // =====================================
       case "1h":
         sql = `
           SELECT
-    created_at,
-    rain,
-    rain_fuzzy,
-    soil,
-    soil_fuzzy,
-    tilt,
-    tilt_fuzzy,
-    fuzzy_value,
-    status
+            created_at,
+            rain,
+            rain_fuzzy,
+            soil,
+            soil_fuzzy,
+            tilt,
+            tilt_fuzzy,
+            fuzzy_value,
+            status
           FROM sensor_data
           WHERE created_at >= NOW() - INTERVAL 1 HOUR
           ORDER BY created_at ASC
         `;
         break;
 
+      // =====================================
+      // 24 JAM
+      // =====================================
       case "1d":
         sql = `
-    SELECT
-    created_at,
-    rain,
-    rain_fuzzy,
-    soil,
-    soil_fuzzy,
-    tilt,
-    tilt_fuzzy,
-    fuzzy_value,
-    status
-    FROM sensor_data
-    WHERE created_at >= NOW() - INTERVAL 1 DAY
-    ORDER BY created_at ASC
-  `;
+          SELECT
+            created_at,
+            rain,
+            rain_fuzzy,
+            soil,
+            soil_fuzzy,
+            tilt,
+            tilt_fuzzy,
+            fuzzy_value,
+            status
+          FROM sensor_data
+          WHERE created_at >= NOW() - INTERVAL 1 DAY
+          ORDER BY created_at ASC
+        `;
         break;
 
       // =====================================
@@ -90,15 +93,15 @@ const Sensor = {
       default:
         sql = `
           SELECT
-    created_at,
-    rain,
-    rain_fuzzy,
-    soil,
-    soil_fuzzy,
-    tilt,
-    tilt_fuzzy,
-    fuzzy_value,
-    status
+            created_at,
+            rain,
+            rain_fuzzy,
+            soil,
+            soil_fuzzy,
+            tilt,
+            tilt_fuzzy,
+            fuzzy_value,
+            status
           FROM sensor_data
           WHERE created_at >= NOW() - INTERVAL 1 HOUR
           ORDER BY created_at ASC
@@ -108,45 +111,49 @@ const Sensor = {
     db.query(sql, callback);
   },
 
+  // =====================================
+  // HISTORY BERDASARKAN TANGGAL
+  // =====================================
   getHistoryByDate(start, end, callback) {
     const sql = `
-    SELECT
-    created_at,
-    rain,
-    rain_fuzzy,
-    soil,
-    soil_fuzzy,
-    tilt,
-    tilt_fuzzy,
-    fuzzy_value,
-    status
-    FROM sensor_data
-    WHERE DATE(created_at) BETWEEN ? AND ?
-    ORDER BY created_at ASC
-  `;
+      SELECT
+        created_at,
+        rain,
+        rain_fuzzy,
+        soil,
+        soil_fuzzy,
+        tilt,
+        tilt_fuzzy,
+        fuzzy_value,
+        status
+      FROM sensor_data
+      WHERE DATE(created_at) BETWEEN ? AND ?
+      ORDER BY created_at ASC
+    `;
 
     db.query(sql, [start, end], callback);
   },
+
   // =====================================
   // TIMELINE STATUS
   // =====================================
   getTimeline(callback) {
     const sql = `
-   SELECT
-    id,
-    created_at,
-    rain,
-    rain_fuzzy,
-    soil,
-    soil_fuzzy,
-    tilt,
-    tilt_fuzzy,
-    fuzzy_value,
-    status
-FROM sensor_data
-ORDER BY created_at DESC
-LIMIT 20
-  `;
+      SELECT
+        id,
+        created_at,
+        rain,
+        rain_fuzzy,
+        soil,
+        soil_fuzzy,
+        tilt,
+        tilt_fuzzy,
+        fuzzy_value,
+        status
+      FROM sensor_data
+      ORDER BY created_at DESC
+      LIMIT 20
+    `;
 
     db.query(sql, callback);
   },
@@ -156,21 +163,21 @@ LIMIT 20
   // =====================================
   getTimelineByDate(start, end, callback) {
     const sql = `
-    SELECT
-      id,
-      created_at,
-      rain,
-      rain_fuzzy,
-      soil,
-      soil_fuzzy,
-      tilt,
-      tilt_fuzzy,
-      fuzzy_value,
-      status
-    FROM sensor_data
-    WHERE DATE(created_at) BETWEEN ? AND ?
-    ORDER BY created_at DESC
-  `;
+      SELECT
+        id,
+        created_at,
+        rain,
+        rain_fuzzy,
+        soil,
+        soil_fuzzy,
+        tilt,
+        tilt_fuzzy,
+        fuzzy_value,
+        status
+      FROM sensor_data
+      WHERE DATE(created_at) BETWEEN ? AND ?
+      ORDER BY created_at DESC
+    `;
 
     db.query(sql, [start, end], callback);
   },
@@ -217,38 +224,33 @@ LIMIT 20
   create(data, callback) {
     const sql = `
       INSERT INTO sensor_data
-(
-    rain_tip,
-    rain,
-    rain_fuzzy,
-    soil,
-    soil_fuzzy,
-    tilt,
-    tilt_fuzzy,
-    fuzzy_value,
-    status,
-    created_at
-)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (
+        rain_tip,
+        rain,
+        rain_fuzzy,
+        soil,
+        soil_fuzzy,
+        tilt,
+        tilt_fuzzy,
+        fuzzy_value,
+        status,
+        created_at
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     db.query(
       sql,
       [
         data.rain_tip,
-
         data.rain,
         data.rain_fuzzy,
-
         data.soil,
         data.soil_fuzzy,
-
         data.tilt,
         data.tilt_fuzzy,
-
         data.fuzzy_value,
         data.status,
-
         data.created_at,
       ],
       callback
@@ -261,39 +263,34 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   createAsync(data) {
     return new Promise((resolve, reject) => {
       const sql = `
-      INSERT INTO sensor_data
-(
-    rain_tip,
-    rain,
-    rain_fuzzy,
-    soil,
-    soil_fuzzy,
-    tilt,
-    tilt_fuzzy,
-    fuzzy_value,
-    status,
-    created_at
-)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
+        INSERT INTO sensor_data
+        (
+          rain_tip,
+          rain,
+          rain_fuzzy,
+          soil,
+          soil_fuzzy,
+          tilt,
+          tilt_fuzzy,
+          fuzzy_value,
+          status,
+          created_at
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `;
 
       db.query(
         sql,
         [
           data.rain_tip,
-
           data.rain,
           data.rain_fuzzy,
-
           data.soil,
           data.soil_fuzzy,
-
           data.tilt,
           data.tilt_fuzzy,
-
           data.fuzzy_value,
           data.status,
-
           data.created_at,
         ],
         (err, result) => {
@@ -310,34 +307,119 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   // =====================================
   // EXPORT DATA
   // =====================================
-  getExportData(start, end, callback) {
+  // =====================================
+  // EXPORT DATA
+  // =====================================
+  getExportData(range, start, end, callback) {
     let sql = `
     SELECT
-    created_at,
-    rain,
-    rain_fuzzy,
-    soil,
-    soil_fuzzy,
-    tilt,
-    tilt_fuzzy,
-    fuzzy_value,
-    status
-FROM sensor_data
+      created_at,
+      rain,
+      rain_fuzzy,
+      soil,
+      soil_fuzzy,
+      tilt,
+      tilt_fuzzy,
+      fuzzy_value,
+      status
+    FROM sensor_data
   `;
 
     const params = [];
 
+    // =====================================
+    // CUSTOM
+    // =====================================
     if (start && end) {
       sql += `
-      WHERE DATE(created_at) BETWEEN ? AND ?
+      WHERE created_at >= ?
+      AND created_at < DATE_ADD(?, INTERVAL 1 DAY)
     `;
 
       params.push(start, end);
+
+      console.log("====================================");
+      console.log("EXPORT FILTER : CUSTOM");
+      console.log("START :", start);
+      console.log("END   :", end);
     }
 
+    // =====================================
+    // 1 JAM TERAKHIR
+    // Berdasarkan data sensor terakhir
+    // =====================================
+    else if (range === "1h") {
+      sql += `
+      WHERE created_at >= (
+        SELECT DATE_SUB(
+          MAX(created_at),
+          INTERVAL 1 HOUR
+        )
+        FROM sensor_data
+      )
+    `;
+
+      console.log("====================================");
+      console.log("EXPORT FILTER : 1 JAM TERAKHIR");
+    }
+
+    // =====================================
+    // 24 JAM TERAKHIR
+    // Berdasarkan data sensor terakhir
+    // =====================================
+    else if (range === "1d") {
+      sql += `
+      WHERE created_at >= (
+        SELECT DATE_SUB(
+          MAX(created_at),
+          INTERVAL 24 HOUR
+        )
+        FROM sensor_data
+      )
+    `;
+
+      console.log("====================================");
+      console.log("EXPORT FILTER : 24 JAM TERAKHIR");
+    }
+
+    // =====================================
+    // DEFAULT
+    // Jangan pernah mengambil semua data
+    // =====================================
+    else {
+      sql += `
+      WHERE created_at >= (
+        SELECT DATE_SUB(
+          MAX(created_at),
+          INTERVAL 1 HOUR
+        )
+        FROM sensor_data
+      )
+    `;
+
+      console.log("====================================");
+      console.log("EXPORT FILTER : DEFAULT 1 JAM");
+      console.log("RANGE DITERIMA :", range);
+    }
+
+    // =====================================
+    // URUTKAN DATA
+    // =====================================
     sql += `
     ORDER BY created_at ASC
   `;
+
+    // =====================================
+    // DEBUG
+    // =====================================
+    console.log("====================================");
+    console.log("EXPORT QUERY");
+    console.log("Range :", range);
+    console.log("Start :", start);
+    console.log("End   :", end);
+    console.log("SQL   :", sql);
+    console.log("Params:", params);
+    console.log("====================================");
 
     db.query(sql, params, callback);
   },

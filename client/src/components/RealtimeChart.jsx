@@ -603,9 +603,22 @@ export default function RealtimeChart() {
     try {
       let url = "https://jagabumi.up.railway.app/api/export/excel";
 
-      if (range === "custom" && draftStartDate && draftEndDate) {
+      // 1 JAM
+      if (range === "1h") {
+        url += "?range=1h";
+      }
+
+      // 24 JAM
+      else if (range === "1d") {
+        url += "?range=1d";
+      }
+
+      // CUSTOM
+      else if (range === "custom" && draftStartDate && draftEndDate) {
         url += `?start=${draftStartDate}&end=${draftEndDate}`;
       }
+
+      console.log("Export Excel URL:", url);
 
       const response = await fetch(url);
 
@@ -632,7 +645,7 @@ export default function RealtimeChart() {
 
       setShowExportMenu(false);
     } catch (error) {
-      console.error(error);
+      console.error("Export Excel:", error);
 
       alert("Export Excel gagal.");
     }
@@ -645,9 +658,22 @@ export default function RealtimeChart() {
     try {
       let url = "https://jagabumi.up.railway.app/api/export/pdf";
 
-      if (range === "custom" && draftStartDate && draftEndDate) {
+      // 1 JAM
+      if (range === "1h") {
+        url += "?range=1h";
+      }
+
+      // 24 JAM
+      else if (range === "1d") {
+        url += "?range=1d";
+      }
+
+      // CUSTOM
+      else if (range === "custom" && draftStartDate && draftEndDate) {
         url += `?start=${draftStartDate}&end=${draftEndDate}`;
       }
+
+      console.log("Export PDF URL:", url);
 
       const response = await fetch(url);
 
@@ -674,7 +700,7 @@ export default function RealtimeChart() {
 
       setShowExportMenu(false);
     } catch (error) {
-      console.error(error);
+      console.error("Export PDF:", error);
 
       alert("Export PDF gagal.");
     }

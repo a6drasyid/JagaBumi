@@ -124,7 +124,7 @@ export default function FeedbackSection() {
       // REQUEST KE BACKEND
       // =============================================
 
-      const response = await fetch("http://localhost:3000/api/feedback", {
+      const response = await fetch("https://jagabumi.up.railway.app/api/feedback", {
         method: "POST",
 
         headers: {

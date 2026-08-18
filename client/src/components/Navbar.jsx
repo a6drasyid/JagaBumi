@@ -3,9 +3,9 @@ import {
   BarChart3,
   CalendarDays,
   Database,
-  Home,
   MapPin,
   Menu,
+  MessageCircle,
   Mountain,
   Server,
   X,
@@ -13,11 +13,6 @@ import {
 import { useEffect, useState } from "react";
 
 const menus = [
-  {
-    id: "hero",
-    label: "Beranda",
-    icon: Home,
-  },
   {
     id: "monitoring",
     label: "Monitoring",
@@ -47,6 +42,11 @@ const menus = [
     id: "lokasi",
     label: "Lokasi",
     icon: MapPin,
+  },
+  {
+    id: "pengaduan",
+    label: "Kontak",
+    icon: MessageCircle,
   },
 ];
 
@@ -83,7 +83,7 @@ export default function Navbar() {
   // =====================================================
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY + 140;
+      const activationPoint = window.innerHeight * 0.35;
 
       let current = "hero";
 
@@ -92,7 +92,17 @@ export default function Navbar() {
 
         if (!section) return;
 
-        if (scrollPosition >= section.offsetTop) {
+        const rect = section.getBoundingClientRect();
+
+        /*
+         * Section dianggap aktif ketika bagian atasnya
+         * sudah melewati titik aktivasi.
+         *
+         * Karena menus diurutkan dari atas ke bawah,
+         * section terakhir yang memenuhi kondisi akan
+         * menjadi section aktif.
+         */
+        if (rect.top <= activationPoint) {
           current = menu.id;
         }
       });
@@ -106,8 +116,11 @@ export default function Navbar() {
       passive: true,
     });
 
+    window.addEventListener("resize", handleScroll);
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
     };
   }, []);
 

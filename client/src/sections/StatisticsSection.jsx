@@ -8,7 +8,7 @@ export default function StatisticsSection() {
         max-w-full
         overflow-hidden
 
-        bg-[#0F172A]
+       bg-transparent
 
         py-14
         sm:py-16

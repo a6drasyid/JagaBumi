@@ -3,15 +3,15 @@ import { motion } from "framer-motion";
 export default function StepCard({ icon: Icon, title, description }) {
   return (
     <motion.div
-      whileHover={{
-        y: -6,
-        scale: 1.02,
-      }}
-      transition={{
-        duration: 0.3,
-      }}
+      // whileHover={{
+      //   y: -6,
+      //   scale: 1.02,
+      // }}
+      // transition={{
+      //   duration: 0.3,
+      // }}
       className="
-        glass-card
+        
         relative
 
         flex

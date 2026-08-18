@@ -69,7 +69,7 @@ export default function SystemFlow() {
         w-full
         max-w-full
         overflow-hidden
-        bg-[#050505]
+        bg-transparent
 
         py-12
         sm:py-16

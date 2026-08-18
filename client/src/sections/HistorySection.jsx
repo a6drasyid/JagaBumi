@@ -265,7 +265,7 @@ export default function HistorySection() {
 
         overflow-hidden
 
-        bg-[#050505]
+        bg-transparent
 
         py-14
 

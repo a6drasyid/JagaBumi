@@ -21,10 +21,12 @@ export default function LocationSection() {
     <section
       id="lokasi"
       className="
+        relative
         w-full
         max-w-full
         overflow-hidden
-        bg-[#050505]
+
+        bg-transparent
 
         py-14
         sm:py-16
@@ -37,6 +39,9 @@ export default function LocationSection() {
       ================================================= */}
       <div
         className="
+          relative
+          z-10
+
           mx-auto
           w-full
           max-w-7xl

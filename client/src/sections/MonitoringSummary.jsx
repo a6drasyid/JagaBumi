@@ -28,9 +28,7 @@ export default function MonitoringSummary() {
         max-w-full
         overflow-hidden
 
-        bg-gradient-to-b
-        from-[#050505]
-        to-[#0F172A]
+       bg-transparent
 
         py-14
         sm:py-16

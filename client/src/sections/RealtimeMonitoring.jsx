@@ -10,7 +10,7 @@ export default function RealtimeMonitoring() {
         max-w-full
         overflow-hidden
 
-        bg-[#0F172A]
+        bg-transparent
 
         py-14
 

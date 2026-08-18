@@ -197,17 +197,12 @@ export default function FeedbackSection() {
         max-w-full
         overflow-hidden
 
-        bg-[#050505]
+         bg-transparent
 
         py-14
         sm:py-16
         md:py-20
         lg:py-32
-
-        before:pointer-events-none
-        before:absolute
-        before:inset-0
-        before:bg-[radial-gradient(circle_at_15%_20%,rgba(16,185,129,0.10),transparent_34%),radial-gradient(circle_at_85%_75%,rgba(16,185,129,0.07),transparent_36%)]
       "
     >
       {/* =================================================

@@ -10,17 +10,39 @@ const socket = require("./socket");
 
 const sensorRoutes = require("./routes/sensorRoutes");
 const exportRoutes = require("./routes/exportRoutes");
+const feedbackRoutes = require("./routes/feedbackRoutes");
 
 const app = express();
 
 const server = http.createServer(app);
 
+// =====================================
 // Middleware
+// =====================================
+
 app.use(cors());
+
 app.use(express.json());
 
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
+
+// =====================================
+// API ROUTES
+// =====================================
+
 app.use("/api/sensor", sensorRoutes);
+
 app.use("/api/export", exportRoutes);
+
+app.use("/api/feedback", feedbackRoutes);
+
+// =====================================
+// SOCKET.IO
+// =====================================
 
 socket.init(server);
 
@@ -45,6 +67,10 @@ app.get("/test", (req, res) => {
     message: "Railway OK",
   });
 });
+
+// =====================================
+// START SERVER
+// =====================================
 
 const PORT = process.env.PORT || 3000;
 

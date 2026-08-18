@@ -2,6 +2,7 @@ import Footer from "./components/Footer";
 import Hero from "./components/Hero";
 import Navbar from "./components/Navbar";
 
+import FeedbackSection from "./sections/FeedbackSection";
 import HistorySection from "./sections/HistorySection";
 import LocationSection from "./sections/LocationSection";
 import MonitoringSummary from "./sections/MonitoringSummary";
@@ -28,6 +29,7 @@ function App() {
         <SensorSection />
         <StatisticsSection />
         <LocationSection />
+        <FeedbackSection />
       </main>
 
       <Footer />

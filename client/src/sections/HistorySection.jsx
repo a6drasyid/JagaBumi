@@ -254,7 +254,13 @@ function TimelineSkeleton() {
 export default function HistorySection() {
   const { timeline, loading } = useSensor();
 
-  const statusHistory = timeline;
+  const statusHistory = timeline.filter((item, index) => {
+    // Data pertama selalu ditampilkan
+    if (index === 0) return true;
+
+    // Hanya tampilkan jika status berbeda dari data sebelumnya
+    return item.status !== timeline[index - 1].status;
+  });
 
   return (
     <section

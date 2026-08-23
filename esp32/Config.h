@@ -94,6 +94,6 @@ const int DAYLIGHT_OFFSET_SEC = 0;
 //=====================================================
 
 // Kirim data ke server setiap 5 detik
-const unsigned long SERVER_INTERVAL = 60000;
+const unsigned long SERVER_INTERVAL = 1000;
 
 #endif

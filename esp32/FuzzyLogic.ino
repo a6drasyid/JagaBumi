@@ -43,17 +43,17 @@ const float MF_SOIL_MOIST[3] = {30, 50, 70};
 const float MF_SOIL_WET[4] = {55, 75, 100, 100};
 
 //=====================================================
-// KEMIRINGAN TANAH (°)
+// KEMIRINGAN TANAH
 //=====================================================
 
-// Landai
-const float MF_TILT_FLAT[4] = {0, 0, 8, 15};
+// Normal
+const float MF_TILT_NORMAL[4] = {0, 0, 8, 15};
 
-// Sedang
-const float MF_TILT_MEDIUM[3] ={10, 20, 30};
+// Significant
+const float MF_TILT_SIGNIFICANT[3] = {10, 20, 30};
 
-// Curam
-const float MF_TILT_STEEP[4] ={25, 35, 45, 45};
+// Extreme
+const float MF_TILT_EXTREME[4] = {25, 35, 45, 45};
 
 //=====================================================
 // OUTPUT FUZZY (CENTROID)
@@ -93,9 +93,9 @@ enum SoilType
 // Kemiringan
 enum TiltType
 {
-    LANDAI = 0,
-    MIRING = 1,
-    CURAM  = 2
+    NORMAL     = 0,
+    SIGNIFICANT = 1,
+    EXTREME    = 2
 };
 
 // Output
@@ -330,35 +330,35 @@ float soilBasah()
 // MEMBERSHIP KEMIRINGAN
 //=====================================================
 
-float tiltLandai()
+float tiltNormal()
 {
     return trapesium(
         tilt,
-        MF_TILT_FLAT[0],
-        MF_TILT_FLAT[1],
-        MF_TILT_FLAT[2],
-        MF_TILT_FLAT[3]
+        MF_TILT_NORMAL[0],
+        MF_TILT_NORMAL[1],
+        MF_TILT_NORMAL[2],
+        MF_TILT_NORMAL[3]
     );
 }
 
-float tiltSedang()
+float tiltSignificant()
 {
     return segitiga(
         tilt,
-        MF_TILT_MEDIUM[0],
-        MF_TILT_MEDIUM[1],
-        MF_TILT_MEDIUM[2]
+        MF_TILT_SIGNIFICANT[0],
+        MF_TILT_SIGNIFICANT[1],
+        MF_TILT_SIGNIFICANT[2]
     );
 }
 
-float tiltCuram()
+float tiltExtreme()
 {
     return trapesium(
         tilt,
-        MF_TILT_STEEP[0],
-        MF_TILT_STEEP[1],
-        MF_TILT_STEEP[2],
-        MF_TILT_STEEP[3]
+        MF_TILT_EXTREME[0],
+        MF_TILT_EXTREME[1],
+        MF_TILT_EXTREME[2],
+        MF_TILT_EXTREME[3]
     );
 }
 
@@ -455,9 +455,9 @@ void updateMembership()
     soilMF[BASAH]  = soilBasah();
 
     // Kemiringan
-    tiltMF[LANDAI] = tiltLandai();
-    tiltMF[MIRING] = tiltSedang();
-    tiltMF[CURAM]  = tiltCuram();
+  tiltMF[NORMAL]      = tiltNormal();
+tiltMF[SIGNIFICANT] = tiltSignificant();
+tiltMF[EXTREME]     = tiltExtreme();
 }
 
 //=====================================================
@@ -506,19 +506,19 @@ void updateFuzzyCategory()
     // KEMIRINGAN
     //==========================
 
-    if (tiltMF[LANDAI] >= tiltMF[MIRING] &&
-        tiltMF[LANDAI] >= tiltMF[CURAM])
-    {
-        tiltFuzzy = "LANDAI";
-    }
-    else if (tiltMF[MIRING] >= tiltMF[CURAM])
-    {
-        tiltFuzzy = "MIRING";
-    }
-    else
-    {
-        tiltFuzzy = "CURAM";
-    }
+   if (tiltMF[NORMAL] >= tiltMF[SIGNIFICANT] &&
+    tiltMF[NORMAL] >= tiltMF[EXTREME])
+{
+    tiltFuzzy = "NORMAL";
+}
+else if (tiltMF[SIGNIFICANT] >= tiltMF[EXTREME])
+{
+    tiltFuzzy = "SIGNIFICANT";
+}
+else
+{
+    tiltFuzzy = "EXTREME";
+}
 }
 
 //=====================================================
@@ -572,43 +572,43 @@ void fuzzyInference()
 Rule ruleTable[TOTAL_RULE] =
 {
     // Rain Rendah
-    {RENDAH, KERING, LANDAI, AMAN},
-    {RENDAH, KERING, MIRING, AMAN},
-    {RENDAH, KERING, CURAM, WASPADA},
+    {RENDAH, KERING, NORMAL, AMAN},
+    {RENDAH, KERING, SIGNIFICANT, AMAN},
+    {RENDAH, KERING, EXTREME, WASPADA},
 
-    {RENDAH, LEMBAB, LANDAI, AMAN},
-    {RENDAH, LEMBAB, MIRING, WASPADA},
-    {RENDAH, LEMBAB, CURAM, BAHAYA},
+    {RENDAH, LEMBAB, NORMAL, AMAN},
+    {RENDAH, LEMBAB, SIGNIFICANT, WASPADA},
+    {RENDAH, LEMBAB, EXTREME, BAHAYA},
 
-    {RENDAH, BASAH, LANDAI, WASPADA},
-    {RENDAH, BASAH, MIRING, BAHAYA},
-    {RENDAH, BASAH, CURAM, BAHAYA},
+    {RENDAH, BASAH, NORMAL, WASPADA},
+    {RENDAH, BASAH, SIGNIFICANT, BAHAYA},
+    {RENDAH, BASAH, EXTREME, BAHAYA},
 
     // Rain Sedang
-                     {SEDANG, KERING, LANDAI, AMAN},
-    {SEDANG, KERING, MIRING, WASPADA},
-    {SEDANG, KERING, CURAM, BAHAYA},
+    {SEDANG, KERING, NORMAL, AMAN},
+    {SEDANG, KERING, SIGNIFICANT, WASPADA},
+    {SEDANG, KERING, EXTREME, BAHAYA},
 
-    {SEDANG, LEMBAB, LANDAI, WASPADA},
-    {SEDANG, LEMBAB, MIRING, WASPADA},
-    {SEDANG, LEMBAB, CURAM, BAHAYA},
+    {SEDANG, LEMBAB, NORMAL, WASPADA},
+    {SEDANG, LEMBAB, SIGNIFICANT, WASPADA},
+    {SEDANG, LEMBAB, EXTREME, BAHAYA},
 
-    {SEDANG, BASAH, LANDAI, WASPADA},
-    {SEDANG, BASAH, MIRING, BAHAYA},
-    {SEDANG, BASAH, CURAM, BAHAYA},
+    {SEDANG, BASAH, NORMAL, WASPADA},
+    {SEDANG, BASAH, SIGNIFICANT, BAHAYA},
+    {SEDANG, BASAH, EXTREME, BAHAYA},
 
     // Rain Tinggi
-    {TINGGI, KERING, LANDAI, WASPADA},
-    {TINGGI, KERING, MIRING, BAHAYA},
-    {TINGGI, KERING, CURAM, BAHAYA},
+    {TINGGI, KERING, NORMAL, WASPADA},
+    {TINGGI, KERING, SIGNIFICANT, BAHAYA},
+    {TINGGI, KERING, EXTREME, BAHAYA},
 
-    {TINGGI, LEMBAB, LANDAI, BAHAYA},
-    {TINGGI, LEMBAB, MIRING, BAHAYA},
-    {TINGGI, LEMBAB, CURAM, BAHAYA},
+    {TINGGI, LEMBAB, NORMAL, BAHAYA},
+    {TINGGI, LEMBAB, SIGNIFICANT, BAHAYA},
+    {TINGGI, LEMBAB, EXTREME, BAHAYA},
 
-    {TINGGI, BASAH, LANDAI, BAHAYA},
-    {TINGGI, BASAH, MIRING, BAHAYA},
-    {TINGGI, BASAH, CURAM, BAHAYA}
+    {TINGGI, BASAH, NORMAL, BAHAYA},
+    {TINGGI, BASAH, SIGNIFICANT, BAHAYA},
+    {TINGGI, BASAH, EXTREME, BAHAYA}
 };
 
 //=====================================================
@@ -784,10 +784,16 @@ const char* tiltName(byte value)
 {
     switch(value)
     {
-        case LANDAI: return "LANDAI";
-        case MIRING: return "MIRING";
-        case CURAM:  return "CURAM";
+        case NORMAL:
+            return "NORMAL";
+
+        case SIGNIFICANT:
+            return "SIGNIFICANT";
+
+        case EXTREME:
+            return "EXTREME";
     }
+
     return "-";
 }
 

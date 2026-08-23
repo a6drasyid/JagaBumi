@@ -110,17 +110,17 @@ else
 
     Serial.println("Kemiringan");
 
-    Serial.print("Landai   ");
-    printProgressBar(tiltLandai());
-    Serial.println();
+Serial.print("Normal       ");
+printProgressBar(tiltNormal());
+Serial.println();
 
-    Serial.print("Miring   ");
-    printProgressBar(tiltSedang());
-    Serial.println();
+Serial.print("Significant  ");
+printProgressBar(tiltSignificant());
+Serial.println();
 
-    Serial.print("Curam    ");
-    printProgressBar(tiltCuram());
-    Serial.println();
+Serial.print("Extreme      ");
+printProgressBar(tiltExtreme());
+Serial.println();
 
     //====================================================
 // HASIL FUZZIFIKASI

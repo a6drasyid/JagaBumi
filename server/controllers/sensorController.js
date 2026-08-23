@@ -233,7 +233,7 @@ ${status}
 📊 *Data Sensor*
 🌧 Curah Hujan      : ${rain} mm (${rain_fuzzy})
 🌱 Kelembaban Tanah : ${soil} % (${soil_fuzzy})
-📐 Kemiringan Lereng: ${tilt}° (${tilt_fuzzy})
+📐 Kemiringan: ${tilt}° (${tilt_fuzzy})
 ━━━━━━━━━━━━━━━━━━━━━━
 ${
   status === "AMAN"

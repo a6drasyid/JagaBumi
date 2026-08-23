@@ -27,11 +27,11 @@ export default function MonitoringCard({
   // =====================================================
   // CATEGORY STYLE
   // =====================================================
-  const categoryStyle = ["RENDAH", "KERING", "LANDAI"].includes(category)
+  const categoryStyle = ["RENDAH", "KERING", "NORMAL"].includes(category)
     ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400"
-    : ["SEDANG", "LEMBAB", "MIRING"].includes(category)
+    : ["SEDANG", "LEMBAB", "SIGNIFICANT"].includes(category)
       ? "bg-yellow-500/10 border border-yellow-500/20 text-yellow-400"
-      : ["TINGGI", "BASAH", "CURAM"].includes(category)
+      : ["TINGGI", "BASAH", "EXTREME"].includes(category)
         ? "bg-red-500/10 border border-red-500/20 text-red-500"
         : "bg-white/10 border border-white/10 text-white";
 

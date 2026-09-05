@@ -1,14 +1,18 @@
 import StatCard from "../components/StatCard";
+import useStatistics from "../hooks/useStatistics";
 
 export default function StatisticsSection() {
+  const { stats, loading } = useStatistics();
+
   return (
     <section
+      id="statistik"
       className="
+        relative
         w-full
         max-w-full
         overflow-hidden
-
-       bg-transparent
+        bg-transparent
 
         py-14
         sm:py-16
@@ -21,22 +25,17 @@ export default function StatisticsSection() {
           mx-auto
           w-full
           max-w-7xl
-          min-w-0
-
           px-3
           min-[375px]:px-4
           sm:px-6
           lg:px-8
         "
       >
-        {/* =================================================
-            SECTION HEADER
-        ================================================= */}
+        {/* HEADER */}
         <div
           className="
             mx-auto
             mb-8
-            w-full
             max-w-4xl
             text-center
 
@@ -45,140 +44,58 @@ export default function StatisticsSection() {
             lg:mb-20
           "
         >
-          <p
-            className="
-              text-[10px]
-              font-medium
-              uppercase
-              tracking-[0.2em]
-              text-emerald-400
-
-              min-[375px]:text-[11px]
-
-              sm:text-xs
-              sm:tracking-[0.22em]
-
-              lg:text-base
-              lg:tracking-widest
-            "
-          >
+          <p className="text-emerald-400 text-xs uppercase tracking-[0.25em] font-medium">
             Statistik
           </p>
 
-          <h2
-            className="
-              mt-2.5
-
-              break-words
-
-              text-[1.75rem]
-              font-bold
-              leading-[1.15]
-              tracking-tight
-              text-white
-
-              min-[375px]:text-3xl
-
-              sm:mt-3
-              sm:text-4xl
-
-              lg:mt-4
-              lg:text-5xl
-            "
-          >
+          <h2 className="mt-3 text-3xl sm:text-4xl lg:text-5xl font-bold text-white">
             Performa Sistem
           </h2>
 
-          <p
-            className="
-              mx-auto
-              mt-3
-              max-w-2xl
-
-              text-xs
-              leading-5
-              text-gray-400
-
-              min-[375px]:text-sm
-              min-[375px]:leading-6
-
-              sm:mt-4
-              sm:text-base
-              sm:leading-7
-
-              lg:mt-5
-            "
-          >
-            Gambaran singkat performa sistem monitoring berbasis IoT dan metode Fuzzy Mamdani.
+          <p className="mt-4 text-gray-400 max-w-2xl mx-auto leading-7">
+            Statistik sistem diperbarui secara otomatis berdasarkan data sensor
+            yang tersimpan pada database JagaBumi.
           </p>
         </div>
 
-        {/* =================================================
-            STATISTICS GRID
-
-            MOBILE  : 2 kolom
-            TABLET  : 2 kolom
-            DESKTOP : 4 kolom
-
-            items-stretch memastikan tinggi card sama
-        ================================================= */}
+        {/* GRID */}
         <div
           className="
             grid
-            w-full
-            min-w-0
-
             grid-cols-2
-            items-stretch
-
-            gap-2
-
-            min-[375px]:gap-3
-
-            sm:gap-4
-
-            md:grid-cols-2
-            md:gap-6
-
+            gap-3
+            sm:gap-5
             lg:grid-cols-4
             lg:gap-8
           "
         >
-          <div className="h-full min-w-0">
-            <StatCard
-              title="Data Sensor"
-              end={1000}
-              suffix="+"
-              description="Data pembacaan sensor yang telah direkam."
-            />
-          </div>
+          <StatCard
+            title="Data Sensor"
+            end={loading ? 0 : stats.totalData}
+            suffix="+"
+            description="Total data pembacaan sensor yang tersimpan pada database."
+          />
 
-          <div className="h-full min-w-0">
-            <StatCard
-              title="Akurasi Sistem"
-              end={99}
-              suffix="%"
-              description="Tingkat akurasi hasil klasifikasi Fuzzy Mamdani."
-            />
-          </div>
+          <StatCard
+            title="Akurasi Sistem"
+            end={stats.accuracy}
+            suffix="%"
+            description="Tingkat akurasi klasifikasi metode Fuzzy Mamdani."
+          />
 
-          <div className="h-full min-w-0">
-            <StatCard
-              title="Monitoring"
-              end={24}
-              suffix="/7"
-              description="Pemantauan kondisi lereng tanpa henti."
-            />
-          </div>
+          <StatCard
+            title="Monitoring Aktif"
+            end={loading ? 0 : stats.monitoringDays}
+            suffix=" Hari"
+            description="Lama sistem melakukan monitoring secara berkelanjutan."
+          />
 
-          <div className="h-full min-w-0">
-            <StatCard
-              title="Sensor Aktif"
-              end={3}
-              suffix=""
-              description="Rain Gauge, FC-28, dan MPU6050."
-            />
-          </div>
+          <StatCard
+            title="Sensor Aktif"
+            end={stats.activeSensors}
+            suffix=""
+            description="Rain Gauge, FC-28 Soil Moisture, dan MPU6050."
+          />
         </div>
       </div>
     </section>

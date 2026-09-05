@@ -11,6 +11,7 @@ const socket = require("./socket");
 const sensorRoutes = require("./routes/sensorRoutes");
 const exportRoutes = require("./routes/exportRoutes");
 const feedbackRoutes = require("./routes/feedbackRoutes");
+const statisticsRoutes = require("./routes/statisticsRoutes");
 
 const app = express();
 
@@ -39,6 +40,8 @@ app.use("/api/sensor", sensorRoutes);
 app.use("/api/export", exportRoutes);
 
 app.use("/api/feedback", feedbackRoutes);
+
+app.use("/api/statistics", statisticsRoutes);
 
 // =====================================
 // SOCKET.IO

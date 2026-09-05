@@ -1,6 +1,12 @@
 import { motion } from "framer-motion";
+import AnimatedNumber from "./AnimatedNumber";
 
-export default function StatCard({ title, end, suffix = "", description }) {
+export default function StatCard({
+  title,
+  end,
+  suffix = "",
+  description,
+}) {
   return (
     <motion.div
       initial={{
@@ -54,9 +60,6 @@ export default function StatCard({ title, end, suffix = "", description }) {
     >
       {/* =================================================
           TITLE
-
-          min-height menjaga posisi angka tetap sejajar
-          walaupun judul menjadi 2 baris
       ================================================= */}
       <div
         className="
@@ -74,7 +77,6 @@ export default function StatCard({ title, end, suffix = "", description }) {
         <p
           className="
             min-w-0
-
             break-words
 
             text-[10px]
@@ -95,7 +97,7 @@ export default function StatCard({ title, end, suffix = "", description }) {
       </div>
 
       {/* =================================================
-          VALUE
+          VALUE (ANIMASI)
       ================================================= */}
       <div
         className="
@@ -113,7 +115,6 @@ export default function StatCard({ title, end, suffix = "", description }) {
         <span
           className="
             min-w-0
-
             break-words
 
             text-[1.65rem]
@@ -123,7 +124,6 @@ export default function StatCard({ title, end, suffix = "", description }) {
             text-white
 
             min-[360px]:text-[1.8rem]
-
             min-[390px]:text-3xl
 
             sm:text-4xl
@@ -131,7 +131,7 @@ export default function StatCard({ title, end, suffix = "", description }) {
             lg:text-5xl
           "
         >
-          {end}
+          <AnimatedNumber value={Number(end)} />
         </span>
 
         {suffix && (
@@ -161,9 +161,6 @@ export default function StatCard({ title, end, suffix = "", description }) {
 
       {/* =================================================
           SPACER
-
-          flex-1 mendorong description ke posisi bawah.
-          Ini membuat semua description sejajar.
       ================================================= */}
       <div
         className="
@@ -178,9 +175,6 @@ export default function StatCard({ title, end, suffix = "", description }) {
 
       {/* =================================================
           DESCRIPTION
-
-          Tinggi minimum menjaga bagian bawah semua
-          card tetap konsisten.
       ================================================= */}
       <div
         className="
@@ -198,7 +192,6 @@ export default function StatCard({ title, end, suffix = "", description }) {
         <p
           className="
             min-w-0
-
             break-words
 
             text-[9px]

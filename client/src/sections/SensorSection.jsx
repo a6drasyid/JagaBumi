@@ -158,7 +158,7 @@ export default function SensorSection() {
           <div className="w-full min-w-0">
             <SensorCard
               image={rain}
-              title="Rain Gauge"
+              title="Tipping Bucket Rain Gauge"
               description="Mengukur intensitas curah hujan secara otomatis dan mengirimkan data ke ESP32."
               specs="Output Pulse • Real-time • Outdoor"
             />
@@ -170,7 +170,7 @@ export default function SensorSection() {
           <div className="w-full min-w-0">
             <SensorCard
               image={soil}
-              title="FC-28 Soil Moisture Sensor"
+              title="Soil Moisture Sensor"
               description="Mengukur kelembaban tanah sebagai indikator tingkat kejenuhan air pada lereng."
               specs="0–100% Moisture • Analog Output"
             />
@@ -194,7 +194,7 @@ export default function SensorSection() {
           >
             <SensorCard
               image={tilt}
-              title="MPU6050 Tilt Sensor"
+              title="MPU6050 Sensor"
               description="Mendeteksi perubahan sudut atau kemiringan lereng untuk mengidentifikasi potensi pergerakan tanah."
               specs="Accelerometer + Gyroscope • I2C"
             />

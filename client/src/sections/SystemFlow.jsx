@@ -20,12 +20,12 @@ import {
 const steps = [
   {
     icon: CloudRain,
-    title: "Rain Gauge",
+    title: "Tipping Bucket Rain Gauge",
     description: "Mengukur curah hujan.",
   },
   {
     icon: Droplets,
-    title: "FC-28",
+    title: "Capacitive Soil Moisture",
     description: "Mengukur kelembaban tanah.",
   },
   {
@@ -35,7 +35,7 @@ const steps = [
   },
   {
     icon: Cpu,
-    title: "ESP32",
+    title: "NodeMCU ESP32",
     description: "Mengumpulkan data sensor.",
   },
   {

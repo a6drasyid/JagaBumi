@@ -16,13 +16,13 @@ import useBMKG from "../hooks/useBMKG";
 // ICON CUACA
 // =====================================================
 function WeatherIcon({ condition }) {
-  const text = (condition || "").toLowerCase();
+  const weather = (condition || "").toLowerCase();
 
-  if (text.includes("hujan")) {
+  if (weather.includes("hujan")) {
     return <CloudRain className="h-8 w-8 text-sky-400 sm:h-10 sm:w-10" />;
   }
 
-  if (text.includes("berawan")) {
+  if (weather.includes("berawan")) {
     return <Cloud className="h-8 w-8 text-gray-300 sm:h-10 sm:w-10" />;
   }
 
@@ -30,26 +30,28 @@ function WeatherIcon({ condition }) {
 }
 
 // =====================================================
-// STATUS BMKG
+// STATUS PERINGATAN BMKG
 // =====================================================
 const getWarning = (condition = "") => {
-  const text = condition.toLowerCase();
+  const weather = condition.toLowerCase();
 
-  if (text.includes("lebat")) {
+  if (weather.includes("lebat")) {
     return {
       color: "text-red-400",
       bg: "bg-red-500/10",
       border: "border-red-500/20",
-      message: "Potensi hujan lebat. Tingkatkan kewaspadaan terhadap risiko longsor.",
+      message:
+        "Potensi hujan lebat. Tingkatkan kewaspadaan terhadap risiko longsor pada kawasan lereng.",
     };
   }
 
-  if (text.includes("sedang") || text.includes("ringan")) {
+  if (weather.includes("sedang") || weather.includes("ringan")) {
     return {
       color: "text-yellow-400",
       bg: "bg-yellow-500/10",
       border: "border-yellow-500/20",
-      message: "Potensi hujan masih ada. Pantau kondisi lereng secara berkala.",
+      message:
+        "Potensi hujan masih ada. Pantau kondisi lereng dan sistem peringatan dini secara berkala.",
     };
   }
 
@@ -57,12 +59,13 @@ const getWarning = (condition = "") => {
     color: "text-emerald-400",
     bg: "bg-emerald-500/10",
     border: "border-emerald-500/20",
-    message: "Cuaca relatif aman berdasarkan prakiraan BMKG saat ini.",
+    message:
+      "Cuaca relatif aman berdasarkan prakiraan BMKG saat ini. Monitoring tetap dilakukan secara real-time.",
   };
 };
 
 // =====================================================
-// ITEM INFORMASI
+// CARD INFORMASI
 // =====================================================
 function InfoItem({ icon, label, value }) {
   return (
@@ -81,11 +84,30 @@ function InfoItem({ icon, label, value }) {
       </div>
 
       <div className="min-w-0">
-        <p className="text-[10px] uppercase tracking-[0.15em] text-gray-500">
+        <p
+          className="
+            text-[10px]
+            font-medium
+            uppercase
+            tracking-[0.18em]
+            text-gray-500
+
+            sm:text-[11px]
+          "
+        >
           {label}
         </p>
 
-        <p className="truncate text-sm font-semibold text-white">
+        <p
+          className="
+            truncate
+            text-sm
+            font-semibold
+            text-white
+
+            sm:text-base
+          "
+        >
           {value}
         </p>
       </div>
@@ -108,7 +130,7 @@ export default function WeatherBMKGCard() {
           border border-white/10
           bg-white/5
           backdrop-blur-xl
-          p-5 sm:p-6
+          p-5 sm:p-6 lg:p-7
           shadow-2xl
         "
       >
@@ -133,7 +155,7 @@ export default function WeatherBMKGCard() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 25 }}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.35 }}
@@ -143,11 +165,9 @@ export default function WeatherBMKGCard() {
         overflow-hidden
 
         rounded-3xl
-
         border border-white/10
 
         bg-white/5
-
         backdrop-blur-xl
 
         p-5
@@ -157,29 +177,30 @@ export default function WeatherBMKGCard() {
         shadow-2xl
       "
     >
-      {/* Glow Hijau Sama Seperti Feedback Card */}
+      {/* Glow kiri atas */}
       <div
         className="
           pointer-events-none
           absolute
-          -top-36
-          -left-36
-          h-[420px]
-          w-[420px]
+          -left-32
+          -top-32
+          h-[360px]
+          w-[360px]
           rounded-full
           bg-emerald-500/12
-          blur-[150px]
+          blur-[140px]
         "
       />
 
+      {/* Glow kanan bawah */}
       <div
         className="
           pointer-events-none
           absolute
-          -bottom-32
-          -right-28
-          h-[360px]
-          w-[360px]
+          -bottom-28
+          -right-24
+          h-[320px]
+          w-[320px]
           rounded-full
           bg-green-400/10
           blur-[140px]
@@ -187,20 +208,44 @@ export default function WeatherBMKGCard() {
       />
 
       <div className="relative z-10">
-        {/* ================= HEADER ================= */}
+        {/* ================================================= */}
+        {/* HEADER */}
+        {/* ================================================= */}
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <p className="text-xs font-medium uppercase tracking-[0.22em] text-emerald-400">
+            <p
+              className="
+                text-[11px]
+                font-medium
+                uppercase
+                tracking-[0.2em]
+                text-emerald-400
+
+                sm:text-xs
+                lg:text-sm
+              "
+            >
               BMKG • PRAKIRAAN CUACA
             </p>
 
-            <h3 className="mt-2 text-2xl font-bold tracking-tight text-white lg:text-3xl">
+            <h3
+              className="
+                mt-2
+                text-2xl
+                font-bold
+                tracking-tight
+                text-white
+
+                sm:text-3xl
+                lg:text-4xl
+              "
+            >
               Kondisi Cuaca Pusuk Sembalun
             </h3>
 
-            <div className="mt-3 flex items-center gap-2 text-sm text-gray-400">
+            <div className="mt-3 flex items-center gap-2 text-sm text-gray-400 sm:text-base">
               <MapPin className="h-4 w-4 text-emerald-400" />
-              Pusuk Sembalun • Lombok Timur, NTB
+              Pusuk Sembalun, Lombok Timur, NTB
             </div>
 
             <p className="mt-1 text-xs text-gray-500">
@@ -211,8 +256,10 @@ export default function WeatherBMKGCard() {
           <div
             className="
               flex h-16 w-16 items-center justify-center
+
               rounded-2xl
               border border-white/10
+
               bg-white/5
               backdrop-blur-xl
             "
@@ -221,17 +268,42 @@ export default function WeatherBMKGCard() {
           </div>
         </div>
 
-        {/* ================= KONDISI ================= */}
+        {/* ================================================= */}
+        {/* SUHU */}
+        {/* ================================================= */}
         <div className="mt-8 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <p className="text-sm text-gray-400">Kondisi Saat Ini</p>
+            <p className="text-sm text-gray-400 sm:text-base">
+              Kondisi Saat Ini
+            </p>
 
-            <h2 className="mt-2 text-5xl font-bold tracking-tight text-white lg:text-6xl">
+            <h2
+              className="
+                mt-2
+                text-5xl
+                font-bold
+                leading-none
+                tracking-tight
+                text-white
+
+                sm:text-6xl
+                lg:text-7xl
+              "
+            >
               {weather?.temperature ?? "--"}°
             </h2>
 
-            <p className="mt-2 text-lg font-medium text-emerald-300">
-              {weather?.weather}
+            <p
+              className="
+                mt-3
+                text-lg
+                font-semibold
+                text-emerald-300
+
+                sm:text-xl
+              "
+            >
+              {weather?.weather || "Tidak tersedia"}
             </p>
           </div>
 
@@ -240,7 +312,12 @@ export default function WeatherBMKGCard() {
               rounded-full
               border
               px-4 py-2
-              text-xs font-medium
+
+              text-xs
+              font-medium
+              uppercase
+              tracking-wide
+
               ${warning.bg}
               ${warning.border}
               ${warning.color}
@@ -250,7 +327,9 @@ export default function WeatherBMKGCard() {
           </div>
         </div>
 
-        {/* ================= INFORMASI ================= */}
+        {/* ================================================= */}
+        {/* GRID INFORMASI */}
+        {/* ================================================= */}
         <div className="mt-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
           <InfoItem
             icon={<ThermometerSun size={18} />}
@@ -277,15 +356,18 @@ export default function WeatherBMKGCard() {
           />
         </div>
 
-        {/* ================= ALERT ================= */}
+        {/* ================================================= */}
+        {/* REKOMENDASI BMKG */}
+        {/* ================================================= */}
         <div
           className={`
             mt-8
             rounded-2xl
             border
+            p-4
+
             ${warning.border}
             ${warning.bg}
-            p-4
           `}
         >
           <div className="flex items-start gap-3">
@@ -294,7 +376,7 @@ export default function WeatherBMKGCard() {
             />
 
             <div>
-              <p className={`font-semibold ${warning.color}`}>
+              <p className={`text-sm font-semibold ${warning.color}`}>
                 Rekomendasi BMKG
               </p>
 
@@ -304,7 +386,7 @@ export default function WeatherBMKGCard() {
 
               {error && (
                 <p className="mt-2 text-xs text-yellow-300">
-                  API BMKG sedang tidak tersedia, menampilkan data cadangan.
+                  Data BMKG sementara tidak dapat diperbarui. Menampilkan data terakhir yang tersedia.
                 </p>
               )}
             </div>

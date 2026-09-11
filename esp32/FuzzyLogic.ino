@@ -152,7 +152,7 @@ float tiltMF[3];
 // RULE
 //=====================================================
 
-const byte TOTAL_RULE = 27;
+const byte TOTAL_RULE = 16;
 
 float rule[TOTAL_RULE];
 
@@ -569,45 +569,76 @@ void fuzzyInference()
 // RULE TABLE
 //=====================================================
 
+//=====================================================
+// RULE TABLE
+//=====================================================
+
+//=====================================================
+// RULE TABLE
+//=====================================================
+
 Rule ruleTable[TOTAL_RULE] =
 {
-    // Rain Rendah
-    {RENDAH, KERING, NORMAL, AMAN},
-    {RENDAH, KERING, SIGNIFICANT, AMAN},
-    {RENDAH, KERING, EXTREME, WASPADA},
+    // =====================================================
+    // KEMIRINGAN NORMAL
+    // =====================================================
 
+    // R1
+    {RENDAH, KERING, NORMAL, AMAN},
+
+    // R2
     {RENDAH, LEMBAB, NORMAL, AMAN},
+
+    // R3
+    {RENDAH, BASAH, NORMAL, WASPADA},
+
+    // R4
+    {SEDANG, LEMBAB, NORMAL, AMAN},
+
+    // R5
+    {SEDANG, BASAH, NORMAL, WASPADA},
+
+    // R6
+    {TINGGI, BASAH, NORMAL, WASPADA},
+
+
+    // =====================================================
+    // KEMIRINGAN SIGNIFICANT
+    // =====================================================
+
+    // R7
+    {RENDAH, KERING, SIGNIFICANT, WASPADA},
+
+    // R8
     {RENDAH, LEMBAB, SIGNIFICANT, WASPADA},
+
+    // R9
+    {RENDAH, BASAH, SIGNIFICANT, BAHAYA},
+
+    // R10
+    {SEDANG, LEMBAB, SIGNIFICANT, WASPADA},
+
+    // R11
+    {TINGGI, BASAH, SIGNIFICANT, BAHAYA},
+
+
+    // =====================================================
+    // KEMIRINGAN EXTREME
+    // =====================================================
+
+    // R12
+    {RENDAH, KERING, EXTREME, BAHAYA},
+
+    // R13
     {RENDAH, LEMBAB, EXTREME, BAHAYA},
 
-    {RENDAH, BASAH, NORMAL, WASPADA},
-    {RENDAH, BASAH, SIGNIFICANT, BAHAYA},
+    // R14
     {RENDAH, BASAH, EXTREME, BAHAYA},
 
-    // Rain Sedang
-    {SEDANG, KERING, NORMAL, AMAN},
-    {SEDANG, KERING, SIGNIFICANT, WASPADA},
-    {SEDANG, KERING, EXTREME, BAHAYA},
-
-    {SEDANG, LEMBAB, NORMAL, WASPADA},
-    {SEDANG, LEMBAB, SIGNIFICANT, WASPADA},
+    // R15
     {SEDANG, LEMBAB, EXTREME, BAHAYA},
 
-    {SEDANG, BASAH, NORMAL, WASPADA},
-    {SEDANG, BASAH, SIGNIFICANT, BAHAYA},
-    {SEDANG, BASAH, EXTREME, BAHAYA},
-
-    // Rain Tinggi
-    {TINGGI, KERING, NORMAL, WASPADA},
-    {TINGGI, KERING, SIGNIFICANT, BAHAYA},
-    {TINGGI, KERING, EXTREME, BAHAYA},
-
-    {TINGGI, LEMBAB, NORMAL, BAHAYA},
-    {TINGGI, LEMBAB, SIGNIFICANT, BAHAYA},
-    {TINGGI, LEMBAB, EXTREME, BAHAYA},
-
-    {TINGGI, BASAH, NORMAL, BAHAYA},
-    {TINGGI, BASAH, SIGNIFICANT, BAHAYA},
+    // R16
     {TINGGI, BASAH, EXTREME, BAHAYA}
 };
 

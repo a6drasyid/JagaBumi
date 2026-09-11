@@ -58,9 +58,9 @@ const bool TEST_MODE = false;
 // MANUAL INPUT
 //=====================================================
 
-float TEST_RAIN = 40;     // mm
-int   TEST_SOIL = 90;       // %
-float TEST_TILT = 35;     // derajat
+float TEST_RAIN = 55;     // mm
+int   TEST_SOIL = 68;       // %
+float TEST_TILT = 20;     // derajat
 
 //=====================================================
 // WIFI

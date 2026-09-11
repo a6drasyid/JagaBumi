@@ -13,24 +13,53 @@ import {
 import useBMKG from "../hooks/useBMKG";
 
 // =====================================================
+// KONVERSI ARAH ANGIN BMKG KE BAHASA INDONESIA
+// =====================================================
+const convertWindDirection = (direction = "") => {
+  const directions = {
+    N: "Utara",
+    NNE: "Utara Timur Laut",
+    NE: "Timur Laut",
+    ENE: "Timur Timur Laut",
+
+    E: "Timur",
+    ESE: "Timur Tenggara",
+    SE: "Tenggara",
+    SSE: "Selatan Tenggara",
+
+    S: "Selatan",
+    SSW: "Selatan Barat Daya",
+    SW: "Barat Daya",
+    WSW: "Barat Barat Daya",
+
+    W: "Barat",
+    WNW: "Barat Barat Laut",
+    NW: "Barat Laut",
+    NNW: "Utara Barat Laut",
+  };
+
+  return directions[direction] || direction || "Tidak diketahui";
+};
+
+// =====================================================
 // ICON CUACA
 // =====================================================
-function WeatherIcon({ condition }) {
-  const weather = (condition || "").toLowerCase();
+function WeatherIcon({ weather }) {
+  const text = (weather || "").toLowerCase();
 
-  if (weather.includes("hujan")) {
-    return <CloudRain className="h-8 w-8 text-sky-400 sm:h-10 sm:w-10" />;
+  if (text.includes("hujan")) {
+    return <CloudRain className="h-9 w-9 text-sky-400 sm:h-10 sm:w-10 lg:h-12 lg:w-12" />;
   }
 
-  if (weather.includes("berawan")) {
-    return <Cloud className="h-8 w-8 text-gray-300 sm:h-10 sm:w-10" />;
+  if (text.includes("berawan") || text.includes("kabut")) {
+    return <Cloud className="h-9 w-9 text-gray-300 sm:h-10 sm:w-10 lg:h-12 lg:w-12" />;
   }
 
-  return <Sun className="h-8 w-8 text-yellow-300 sm:h-10 sm:w-10" />;
+  return <Sun className="h-9 w-9 text-yellow-300 sm:h-10 sm:w-10 lg:h-12 lg:w-12" />;
 }
 
 // =====================================================
-// STATUS PERINGATAN BMKG
+// STATUS BMKG
 // =====================================================
 const getWarning = (condition = "") => {
   const weather = condition.toLowerCase();
@@ -45,13 +74,13 @@ const getWarning = (condition = "") => {
     };
   }
 
-  if (weather.includes("sedang") || weather.includes("ringan")) {
+  if (weather.includes("ringan") || weather.includes("sedang")) {
     return {
       color: "text-yellow-400",
       bg: "bg-yellow-500/10",
       border: "border-yellow-500/20",
       message:
-        "Potensi hujan masih ada. Pantau kondisi lereng dan sistem peringatan dini secara berkala.",
+        "Masih terdapat potensi hujan. Pantau kondisi lereng dan sistem peringatan dini secara berkala.",
     };
   }
 
@@ -65,13 +94,12 @@ const getWarning = (condition = "") => {
 };
 
 // =====================================================
-// CARD INFORMASI
+// ITEM INFORMASI
 // =====================================================
 function InfoItem({ icon, label, value }) {
   return (
     <div
       className="
-        flex items-center gap-3
         rounded-2xl
         border border-white/10
         bg-white/5
@@ -79,37 +107,18 @@ function InfoItem({ icon, label, value }) {
         px-4 py-3
       "
     >
-      <div className="rounded-xl bg-emerald-500/10 p-2 text-emerald-400">
-        {icon}
-      </div>
+      <div className="flex items-center gap-3">
+        <div className="rounded-xl bg-emerald-500/10 p-2 text-emerald-400">
+          {icon}
+        </div>
 
-      <div className="min-w-0">
-        <p
-          className="
-            text-[10px]
-            font-medium
-            uppercase
-            tracking-[0.18em]
-            text-gray-500
+        <div className="min-w-0">
+          <p className="text-[11px] font-medium text-gray-400">{label}</p>
 
-            sm:text-[11px]
-          "
-        >
-          {label}
-        </p>
-
-        <p
-          className="
-            truncate
-            text-sm
-            font-semibold
-            text-white
-
-            sm:text-base
-          "
-        >
-          {value}
-        </p>
+          <p className="mt-0.5 text-sm font-semibold text-white sm:text-base">
+            {value}
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -123,27 +132,13 @@ export default function WeatherBMKGCard() {
 
   if (loading) {
     return (
-      <div
-        className="
-          glass-card
-          rounded-3xl
-          border border-white/10
-          bg-white/5
-          backdrop-blur-xl
-          p-5 sm:p-6 lg:p-7
-          shadow-2xl
-        "
-      >
+      <div className="glass-card rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-xl shadow-2xl">
         <div className="animate-pulse space-y-5">
-          <div className="h-3 w-40 rounded-full bg-white/10" />
-          <div className="h-10 w-56 rounded-xl bg-white/10" />
-
+          <div className="h-3 w-44 rounded-full bg-white/10" />
+          <div className="h-9 w-72 rounded-xl bg-white/10" />
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div
-                key={i}
-                className="h-20 rounded-2xl bg-white/10"
-              />
+              <div key={i} className="h-20 rounded-2xl bg-white/10" />
             ))}
           </div>
         </div>
@@ -155,7 +150,7 @@ export default function WeatherBMKGCard() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 25 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.35 }}
@@ -166,170 +161,73 @@ export default function WeatherBMKGCard() {
 
         rounded-3xl
         border border-white/10
-
         bg-white/5
+        p-6
         backdrop-blur-xl
-
-        p-5
-        sm:p-6
-        lg:p-7
-
         shadow-2xl
+
+        lg:p-8
       "
     >
-      {/* Glow kiri atas */}
-      <div
-        className="
-          pointer-events-none
-          absolute
-          -left-32
-          -top-32
-          h-[360px]
-          w-[360px]
-          rounded-full
-          bg-emerald-500/12
-          blur-[140px]
-        "
-      />
+      {/* Glow kiri */}
+      <div className="pointer-events-none absolute -left-28 -top-24 h-[320px] w-[320px] rounded-full bg-emerald-500/10 blur-[120px]" />
 
-      {/* Glow kanan bawah */}
-      <div
-        className="
-          pointer-events-none
-          absolute
-          -bottom-28
-          -right-24
-          h-[320px]
-          w-[320px]
-          rounded-full
-          bg-green-400/10
-          blur-[140px]
-        "
-      />
+      {/* Glow kanan */}
+      <div className="pointer-events-none absolute -bottom-24 right-0 h-[260px] w-[260px] rounded-full bg-green-400/10 blur-[120px]" />
 
       <div className="relative z-10">
-        {/* ================================================= */}
         {/* HEADER */}
-        {/* ================================================= */}
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex items-start justify-between gap-4">
           <div>
-            <p
-              className="
-                text-[11px]
-                font-medium
-                uppercase
-                tracking-[0.2em]
-                text-emerald-400
-
-                sm:text-xs
-                lg:text-sm
-              "
-            >
-              BMKG • PRAKIRAAN CUACA
+            <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-emerald-400 sm:text-xs">
+              BMKG • Prakiraan Cuaca
             </p>
 
-            <h3
-              className="
-                mt-2
-                text-2xl
-                font-bold
-                tracking-tight
-                text-white
-
-                sm:text-3xl
-                lg:text-4xl
-              "
-            >
+            <h3 className="mt-2 text-3xl font-bold tracking-tight text-white lg:text-4xl">
               Kondisi Cuaca Pusuk Sembalun
             </h3>
 
-            <div className="mt-3 flex items-center gap-2 text-sm text-gray-400 sm:text-base">
+            <div className="mt-3 flex items-center gap-2 text-sm text-gray-400">
               <MapPin className="h-4 w-4 text-emerald-400" />
-              Pusuk Sembalun, Lombok Timur, NTB
+              <span>Pusuk Sembalun, Lombok Timur, NTB</span>
             </div>
 
             <p className="mt-1 text-xs text-gray-500">
-              Update BMKG • {weather?.localTime || "--"}
+              Update BMKG •{" "}
+              {weather?.localTime
+                ? new Date(weather.localTime).toLocaleString("id-ID", {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  })
+                : "--"}
             </p>
           </div>
 
-          <div
-            className="
-              flex h-16 w-16 items-center justify-center
-
-              rounded-2xl
-              border border-white/10
-
-              bg-white/5
-              backdrop-blur-xl
-            "
-          >
-            <WeatherIcon condition={weather?.weather} />
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
+            <WeatherIcon weather={weather?.weather} />
           </div>
         </div>
 
-        {/* ================================================= */}
         {/* SUHU */}
-        {/* ================================================= */}
-        <div className="mt-8 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+        <div className="mt-10 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <p className="text-sm text-gray-400 sm:text-base">
-              Kondisi Saat Ini
-            </p>
+            <p className="text-base text-gray-400">Kondisi saat ini</p>
 
-            <h2
-              className="
-                mt-2
-                text-5xl
-                font-bold
-                leading-none
-                tracking-tight
-                text-white
-
-                sm:text-6xl
-                lg:text-7xl
-              "
-            >
+            <h2 className="mt-2 text-6xl font-bold leading-none tracking-tight text-white lg:text-7xl">
               {weather?.temperature ?? "--"}°
             </h2>
 
-            <p
-              className="
-                mt-3
-                text-lg
-                font-semibold
-                text-emerald-300
-
-                sm:text-xl
-              "
-            >
+            <p className="mt-3 text-2xl font-semibold text-emerald-300">
               {weather?.weather || "Tidak tersedia"}
             </p>
           </div>
 
-          <div
-            className={`
-              rounded-full
-              border
-              px-4 py-2
-
-              text-xs
-              font-medium
-              uppercase
-              tracking-wide
-
-              ${warning.bg}
-              ${warning.border}
-              ${warning.color}
-            `}
-          >
-            BMKG LIVE
+          <div className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-xs font-medium text-emerald-400">
+            BMKG Live
           </div>
         </div>
 
-        {/* ================================================= */}
         {/* GRID INFORMASI */}
-        {/* ================================================= */}
         <div className="mt-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
           <InfoItem
             icon={<ThermometerSun size={18} />}
@@ -345,35 +243,23 @@ export default function WeatherBMKGCard() {
 
           <InfoItem
             icon={<Wind size={18} />}
-            label="Kecepatan Angin"
+            label="Kecepatan angin"
             value={`${weather?.windSpeed ?? "--"} km/jam`}
           />
 
           <InfoItem
             icon={<CloudRain size={18} />}
-            label="Arah Angin"
-            value={weather?.windDirection ?? "--"}
+            label="Arah angin"
+            value={convertWindDirection(weather?.windDirection)}
           />
         </div>
 
-        {/* ================================================= */}
-        {/* REKOMENDASI BMKG */}
-        {/* ================================================= */}
+        {/* ALERT */}
         <div
-          className={`
-            mt-8
-            rounded-2xl
-            border
-            p-4
-
-            ${warning.border}
-            ${warning.bg}
-          `}
+          className={`mt-8 rounded-2xl border p-4 ${warning.border} ${warning.bg}`}
         >
           <div className="flex items-start gap-3">
-            <TriangleAlert
-              className={`mt-0.5 h-5 w-5 shrink-0 ${warning.color}`}
-            />
+            <TriangleAlert className={`mt-1 h-5 w-5 ${warning.color}`} />
 
             <div>
               <p className={`text-sm font-semibold ${warning.color}`}>
@@ -386,7 +272,7 @@ export default function WeatherBMKGCard() {
 
               {error && (
                 <p className="mt-2 text-xs text-yellow-300">
-                  Data BMKG sementara tidak dapat diperbarui. Menampilkan data terakhir yang tersedia.
+                  Data BMKG tidak dapat diperbarui. Menampilkan data terakhir yang tersedia.
                 </p>
               )}
             </div>

@@ -1,35 +1,31 @@
 const axios = require("axios");
 
-// =====================================================
-// KODE WILAYAH BMKG
-// Desa Sembalun Bumbung, Kecamatan Sembalun, Lombok Timur
-// =====================================================
+// ===========================================
+// Kode Wilayah BMKG
+// Desa Sembalun Bumbung - Lombok Timur
+// ===========================================
 const ADM4 = "52.03.08.2005";
 
-// =====================================================
-// CACHE BMKG (30 MENIT)
-// =====================================================
-let cacheData = null;
-let cacheTimestamp = 0;
+// ===========================================
+// Cache BMKG
+// ===========================================
+let cache = null;
+let cacheTime = 0;
 
-const CACHE_DURATION = 30 * 60 * 1000; // 30 menit
+const CACHE_DURATION = 30 * 60 * 1000;
 
-// =====================================================
-// AMBIL DATA BMKG
-// =====================================================
+// ===========================================
+// Ambil Data BMKG
+// ===========================================
 async function getBMKGWeather() {
-  // Gunakan cache jika masih berlaku
-  if (
-    cacheData &&
-    Date.now() - cacheTimestamp < CACHE_DURATION
-  ) {
-    console.log("🌦️ BMKG menggunakan cache");
-    return cacheData;
+  if (cache && Date.now() - cacheTime < CACHE_DURATION) {
+    console.log("📦 BMKG Cache");
+    return cache;
   }
 
   const url = `https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4=${ADM4}`;
 
-  console.log("🌍 Mengambil data BMKG...");
+  console.log("🌍 Request BMKG...");
 
   const response = await axios.get(url, {
     timeout: 10000,
@@ -39,32 +35,36 @@ async function getBMKGWeather() {
     },
   });
 
-  const json = response.data;
+  const result = response.data;
 
-  if (!json.data || json.data.length === 0) {
-    throw new Error("Data BMKG kosong.");
+  const lokasi = result.lokasi || {};
+  const cuaca = result.data?.[0]?.cuaca?.[0]?.[0];
+
+  if (!cuaca) {
+    throw new Error("Data prakiraan BMKG tidak ditemukan.");
   }
 
-  const lokasi = json.lokasi || {};
-  const prakiraan = json.data[0].cuaca[0][0];
-
-  cacheData = {
+  cache = {
     location: lokasi.desa || "Pusuk Sembalun",
     district: lokasi.kecamatan || "Sembalun",
-    weather: prakiraan.weather_desc,
-    temperature: prakiraan.t,
-    humidity: prakiraan.hu,
-    windSpeed: prakiraan.ws,
-    windDirection: prakiraan.wd_to,
-    localTime: prakiraan.local_datetime,
-    icon: prakiraan.image,
+    regency: lokasi.kotkab || "Lombok Timur",
+    province: lokasi.provinsi || "Nusa Tenggara Barat",
+
+    weather: cuaca.weather_desc,
+    temperature: Number(cuaca.t),
+    humidity: Number(cuaca.hu),
+    windSpeed: Number(cuaca.ws),
+    windDirection: cuaca.wd_to,
+
+    localTime: cuaca.local_datetime,
+    icon: cuaca.image,
   };
 
-  cacheTimestamp = Date.now();
+  cacheTime = Date.now();
 
-  console.log("✅ Data BMKG berhasil diperbarui");
+  console.log("✅ BMKG Updated");
 
-  return cacheData;
+  return cache;
 }
 
 module.exports = {

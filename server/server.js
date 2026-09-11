@@ -14,7 +14,7 @@ const sensorRoutes = require("./routes/sensorRoutes");
 const exportRoutes = require("./routes/exportRoutes");
 const feedbackRoutes = require("./routes/feedbackRoutes");
 const statisticsRoutes = require("./routes/statisticsRoutes");
-const bmkgRoutes = require("./routes/bmkgRoutes"); // ✅ BMKG
+const bmkgRoutes = require("./routes/bmkgRoutes");
 
 const app = express();
 const server = http.createServer(app);
@@ -30,16 +30,14 @@ const allowedOrigins = [
 app.use(
   cors({
     origin(origin, callback) {
-      // Mengizinkan Postman / ESP32 / request tanpa origin
       if (!origin) return callback(null, true);
 
       if (allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
-        callback(new Error("Origin tidak diizinkan oleh CORS."));
+        callback(null, true); // Railway & Postman tetap diizinkan
       }
     },
-    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
@@ -63,8 +61,6 @@ app.use("/api/sensor", sensorRoutes);
 app.use("/api/export", exportRoutes);
 app.use("/api/feedback", feedbackRoutes);
 app.use("/api/statistics", statisticsRoutes);
-
-// 🌦️ BMKG
 app.use("/api/bmkg", bmkgRoutes);
 
 // ===============================
@@ -79,16 +75,16 @@ app.get("/", (req, res) => {
   res.json({
     success: true,
     app: "JagaBumi Backend",
-    version: "1.1.0",
+    version: "1.2.0",
     message: "Backend Sistem Peringatan Dini Longsor berjalan 🚀",
   });
 });
 
 // ===============================
-// HEALTH CHECK (Railway)
+// HEALTH CHECK
 // ===============================
 app.get("/health", (req, res) => {
-  res.status(200).json({
+  res.json({
     success: true,
     status: "healthy",
     uptime: process.uptime(),
@@ -97,7 +93,7 @@ app.get("/health", (req, res) => {
 });
 
 // ===============================
-// TEST ROUTE
+// TEST
 // ===============================
 app.get("/test", (req, res) => {
   res.json({
@@ -107,7 +103,7 @@ app.get("/test", (req, res) => {
 });
 
 // ===============================
-// 404 HANDLER
+// 404
 // ===============================
 app.use((req, res) => {
   res.status(404).json({
@@ -120,11 +116,11 @@ app.use((req, res) => {
 // ERROR HANDLER
 // ===============================
 app.use((err, req, res, next) => {
-  console.error("SERVER ERROR:", err.message);
+  console.error("SERVER ERROR:", err);
 
   res.status(500).json({
     success: false,
-    message: err.message || "Terjadi kesalahan pada server.",
+    message: err.message || "Internal Server Error",
   });
 });
 
@@ -134,8 +130,6 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, () => {
-  console.log(`🚀 Server berjalan di port ${PORT}`);
-  console.log(`📡 API Sensor      : /api/sensor`);
-  console.log(`📊 API Statistics  : /api/statistics`);
-  console.log(`🌦️ API BMKG        : /api/bmkg`);
+  console.log(`🚀 Server berjalan pada port ${PORT}`);
+  console.log(`🌦️ BMKG Endpoint : /api/bmkg`);
 });

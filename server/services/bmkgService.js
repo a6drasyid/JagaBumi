@@ -12,7 +12,7 @@ const ADM4 = "52.03.08.2005";
 let cache = null;
 let cacheTime = 0;
 
-const CACHE_DURATION = 30 * 60 * 1000; // 30 menit
+const CACHE_DURATION = 30 * 60 * 1000;
 
 // =====================================================
 // KONVERSI ARAH ANGIN KE BAHASA INDONESIA
@@ -49,39 +49,97 @@ function convertWindDirection(direction = "") {
 function convertWeatherDescription(weather = "") {
   const text = weather.toLowerCase().trim();
 
-  // Cerah
-  if (text.includes("clear sky")) return "Cerah";
-  if (text === "clear") return "Cerah";
-  if (text.includes("cerah")) return "Cerah";
+  // ===== CERAH =====
+  if (
+    text === "cerah" ||
+    text.includes("clear sky") ||
+    text.includes("clear")
+  ) {
+    return "Cerah";
+  }
 
-  // Cerah Berawan
-  if (text.includes("partly cloudy")) return "Cerah Berawan";
-  if (text.includes("partly")) return "Cerah Berawan";
-  if (text.includes("cerah berawan")) return "Cerah Berawan";
+  // ===== CERAH BERAWAN =====
+  if (
+    text.includes("cerah berawan") ||
+    text.includes("partly cloudy") ||
+    text.includes("partly_cloudy")
+  ) {
+    return "Cerah Berawan";
+  }
 
-  // Berawan
-  if (text.includes("mostly cloudy")) return "Berawan Tebal";
-  if (text.includes("overcast")) return "Berawan Tebal";
-  if (text.includes("cloudy")) return "Berawan";
-  if (text.includes("berawan")) return "Berawan";
+  // ===== BERAWAN TEBAL =====
+  if (
+    text.includes("berawan tebal") ||
+    text.includes("mostly cloudy") ||
+    text.includes("overcast")
+  ) {
+    return "Berawan Tebal";
+  }
 
-  // Kabut
-  if (text.includes("fog")) return "Kabut Tebal";
-  if (text.includes("mist")) return "Kabut";
-  if (text.includes("haze")) return "Kabut";
-  if (text.includes("smoke")) return "Kabut";
-  if (text.includes("kabut")) return "Kabut";
+  // ===== BERAWAN =====
+  if (
+    text === "berawan" ||
+    text.includes("cloudy")
+  ) {
+    return "Berawan";
+  }
 
-  // Hujan
-  if (text.includes("light rain")) return "Hujan Ringan";
-  if (text.includes("moderate rain")) return "Hujan Sedang";
-  if (text.includes("heavy rain")) return "Hujan Lebat";
-  if (text.includes("very heavy rain")) return "Hujan Sangat Lebat";
-  if (text.includes("rain")) return "Hujan";
+  // ===== KABUT / UDARA KABUR =====
+  if (
+    text.includes("udara kabur") ||
+    text.includes("kabut") ||
+    text.includes("mist") ||
+    text.includes("haze") ||
+    text.includes("smoke")
+  ) {
+    return "Kabut";
+  }
 
-  // Petir
-  if (text.includes("thunderstorm")) return "Hujan Disertai Petir";
-  if (text.includes("storm")) return "Hujan Disertai Petir";
+  if (text.includes("fog")) {
+    return "Kabut Tebal";
+  }
+
+  // ===== HUJAN =====
+  if (
+    text.includes("hujan disertai petir") ||
+    text.includes("thunderstorm") ||
+    text.includes("storm") ||
+    text.includes("petir")
+  ) {
+    return "Hujan Disertai Petir";
+  }
+
+  if (
+    text.includes("hujan sangat lebat") ||
+    text.includes("very heavy rain")
+  ) {
+    return "Hujan Sangat Lebat";
+  }
+
+  if (
+    text.includes("hujan lebat") ||
+    text.includes("heavy rain")
+  ) {
+    return "Hujan Lebat";
+  }
+
+  if (
+    text.includes("hujan sedang") ||
+    text.includes("moderate rain")
+  ) {
+    return "Hujan Sedang";
+  }
+
+  if (
+    text.includes("hujan ringan") ||
+    text.includes("light rain")
+  ) {
+    return "Hujan Ringan";
+  }
+
+  if (text.includes("rain") || text.includes("hujan")) {
+    return "Hujan";
+  }
 
   // Default
   return weather || "Tidak diketahui";
@@ -99,7 +157,7 @@ async function getBMKGWeather() {
 
   const url = `https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4=${ADM4}`;
 
-  console.log("🌍 Mengambil data BMKG...");
+  console.log("🌦️ Mengambil data BMKG...");
 
   const response = await axios.get(url, {
     timeout: 10000,
@@ -112,11 +170,11 @@ async function getBMKGWeather() {
   const json = response.data;
 
   if (!json.data || json.data.length === 0) {
-    throw new Error("Data BMKG kosong.");
+    throw new Error("Data BMKG tidak tersedia.");
   }
 
   const lokasi = json.lokasi || {};
-  const prakiraan = json.data[0]?.cuaca?.[0]?.[0];
+  const prakiraan = json.data?.[0]?.cuaca?.[0]?.[0];
 
   if (!prakiraan) {
     throw new Error("Prakiraan cuaca BMKG tidak ditemukan.");
@@ -124,7 +182,7 @@ async function getBMKGWeather() {
 
   cache = {
     // =====================================
-    // LOKASI
+    // INFORMASI LOKASI
     // =====================================
     location: lokasi.desa || "Pusuk Sembalun",
     district: lokasi.kecamatan || "Sembalun",
@@ -140,7 +198,7 @@ async function getBMKGWeather() {
     humidity: Number(prakiraan.hu ?? 0),
     windSpeed: Number(prakiraan.ws ?? 0),
 
-    // Tidak memakai singkatan (NE, SW, dll)
+    // Arah angin tanpa singkatan
     windDirection: convertWindDirection(prakiraan.wd_to),
 
     localTime: prakiraan.local_datetime,
@@ -149,7 +207,7 @@ async function getBMKGWeather() {
 
   cacheTime = Date.now();
 
-  console.log("✅ Data BMKG berhasil diperbarui");
+  console.log("✅ BMKG berhasil diperbarui:", cache.weather);
 
   return cache;
 }

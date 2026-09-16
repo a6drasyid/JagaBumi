@@ -18,7 +18,29 @@ export default function useBMKG() {
         if (!mounted) return;
 
         if (res.data.success) {
-          setWeather(res.data.data);
+          const data = res.data.data;
+
+          // Ambil data cuaca saat ini
+          const current = data.current;
+
+          // Ambil prakiraan 24 jam (8 interval × 3 jam)
+          const forecast24h = (data.forecast24h || []).slice(0, 8).map((item) => ({
+            time: new Date(item.local_datetime).toLocaleTimeString("id-ID", {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+            weather: item.weather_desc,
+            temp: item.t,
+            humidity: item.hu,
+            windSpeed: item.ws,
+            windDirection: item.wd,
+          }));
+
+          setWeather({
+            ...current,
+            forecast24h,
+          });
+
           setError(false);
         } else {
           throw new Error("Data BMKG kosong");
@@ -29,6 +51,8 @@ export default function useBMKG() {
         console.error("BMKG Error:", err);
 
         setError(true);
+
+        // Data fallback jika API gagal
         setWeather({
           weather: "Data BMKG tidak tersedia",
           temperature: "--",
@@ -36,6 +60,7 @@ export default function useBMKG() {
           windSpeed: "--",
           windDirection: "--",
           localTime: "Offline",
+          forecast24h: [],
         });
       } finally {
         if (mounted) {
@@ -44,8 +69,10 @@ export default function useBMKG() {
       }
     };
 
+    // Ambil data pertama kali
     fetchWeather();
 
+    // Refresh otomatis setiap 30 menit
     const interval = setInterval(fetchWeather, 30 * 60 * 1000);
 
     return () => {

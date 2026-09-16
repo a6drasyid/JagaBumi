@@ -1,21 +1,20 @@
 const axios = require("axios");
 
 // =====================================================
-// KODE WILAYAH BMKG
-// Desa Sembalun Bumbung (Pusuk Sembalun), Lombok Timur
+// BMKG - Desa Sembalun, Kecamatan Sembalun
+// Kabupaten Lombok Timur, Nusa Tenggara Barat
 // =====================================================
-const ADM4 = "52.03.08.2005";
+const ADM4 = "52.03.15.2005";
 
 // =====================================================
 // CACHE BMKG (30 MENIT)
 // =====================================================
 let cache = null;
 let cacheTime = 0;
-
 const CACHE_DURATION = 30 * 60 * 1000;
 
 // =====================================================
-// KONVERSI ARAH ANGIN KE BAHASA INDONESIA
+// KONVERSI ARAH ANGIN
 // =====================================================
 function convertWindDirection(direction = "") {
   const directions = {
@@ -23,125 +22,43 @@ function convertWindDirection(direction = "") {
     NNE: "Utara Timur Laut",
     NE: "Timur Laut",
     ENE: "Timur Timur Laut",
-
     E: "Timur",
     ESE: "Timur Tenggara",
     SE: "Tenggara",
     SSE: "Selatan Tenggara",
-
     S: "Selatan",
     SSW: "Selatan Barat Daya",
     SW: "Barat Daya",
     WSW: "Barat Barat Daya",
-
     W: "Barat",
     WNW: "Barat Barat Laut",
     NW: "Barat Laut",
     NNW: "Utara Barat Laut",
   };
 
-  return directions[direction] || "Tidak diketahui";
+  return directions[String(direction).toUpperCase()] || direction || "Tidak diketahui";
 }
 
 // =====================================================
-// KONVERSI KETERANGAN CUACA BMKG KE BAHASA INDONESIA
+// KONVERSI DESKRIPSI CUACA BMKG
 // =====================================================
 function convertWeatherDescription(weather = "") {
   const text = weather.toLowerCase().trim();
 
-  // ===== CERAH =====
-  if (
-    text === "cerah" ||
-    text.includes("clear sky") ||
-    text.includes("clear")
-  ) {
-    return "Cerah";
-  }
-
-  // ===== CERAH BERAWAN =====
-  if (
-    text.includes("cerah berawan") ||
-    text.includes("partly cloudy") ||
-    text.includes("partly_cloudy")
-  ) {
-    return "Cerah Berawan";
-  }
-
-  // ===== BERAWAN TEBAL =====
-  if (
-    text.includes("berawan tebal") ||
-    text.includes("mostly cloudy") ||
-    text.includes("overcast")
-  ) {
-    return "Berawan Tebal";
-  }
-
-  // ===== BERAWAN =====
-  if (
-    text === "berawan" ||
-    text.includes("cloudy")
-  ) {
-    return "Berawan";
-  }
-
-  // ===== KABUT / UDARA KABUR =====
-  if (
-    text.includes("udara kabur") ||
-    text.includes("kabut") ||
-    text.includes("mist") ||
-    text.includes("haze") ||
-    text.includes("smoke")
-  ) {
+  if (text.includes("cerah berawan")) return "Cerah Berawan";
+  if (text === "cerah" || text.includes("clear")) return "Cerah";
+  if (text.includes("berawan tebal")) return "Berawan Tebal";
+  if (text === "berawan" || text.includes("cloudy")) return "Berawan";
+  if (text.includes("kabut") || text.includes("mist") || text.includes("fog"))
     return "Kabut";
-  }
 
-  if (text.includes("fog")) {
-    return "Kabut Tebal";
-  }
+  if (text.includes("petir")) return "Hujan Disertai Petir";
+  if (text.includes("hujan sangat lebat")) return "Hujan Sangat Lebat";
+  if (text.includes("hujan lebat")) return "Hujan Lebat";
+  if (text.includes("hujan sedang")) return "Hujan Sedang";
+  if (text.includes("hujan ringan")) return "Hujan Ringan";
+  if (text.includes("hujan")) return "Hujan";
 
-  // ===== HUJAN =====
-  if (
-    text.includes("hujan disertai petir") ||
-    text.includes("thunderstorm") ||
-    text.includes("storm") ||
-    text.includes("petir")
-  ) {
-    return "Hujan Disertai Petir";
-  }
-
-  if (
-    text.includes("hujan sangat lebat") ||
-    text.includes("very heavy rain")
-  ) {
-    return "Hujan Sangat Lebat";
-  }
-
-  if (
-    text.includes("hujan lebat") ||
-    text.includes("heavy rain")
-  ) {
-    return "Hujan Lebat";
-  }
-
-  if (
-    text.includes("hujan sedang") ||
-    text.includes("moderate rain")
-  ) {
-    return "Hujan Sedang";
-  }
-
-  if (
-    text.includes("hujan ringan") ||
-    text.includes("light rain")
-  ) {
-    return "Hujan Ringan";
-  }
-
-  if (text.includes("rain") || text.includes("hujan")) {
-    return "Hujan";
-  }
-
-  // Default
   return weather || "Tidak diketahui";
 }
 
@@ -149,7 +66,7 @@ function convertWeatherDescription(weather = "") {
 // AMBIL DATA BMKG
 // =====================================================
 async function getBMKGWeather() {
-  // Gunakan cache jika masih berlaku
+  // Gunakan cache
   if (cache && Date.now() - cacheTime < CACHE_DURATION) {
     console.log("📦 BMKG menggunakan cache");
     return cache;
@@ -174,40 +91,54 @@ async function getBMKGWeather() {
   }
 
   const lokasi = json.lokasi || {};
-  const prakiraan = json.data?.[0]?.cuaca?.[0]?.[0];
+  const cuacaHariIni = json.data[0].cuaca[0];
 
-  if (!prakiraan) {
+  if (!cuacaHariIni || cuacaHariIni.length === 0) {
     throw new Error("Prakiraan cuaca BMKG tidak ditemukan.");
   }
 
+  // ============================================
+  // DATA SAAT INI
+  // ============================================
+  const current = cuacaHariIni[0];
+
+  // ============================================
+  // PRAKIRAAN 24 JAM (8 interval × 3 jam)
+  // ============================================
+  const forecast24h = cuacaHariIni.slice(0, 8).map((item) => ({
+    local_datetime: item.local_datetime,
+    weather_desc: convertWeatherDescription(item.weather_desc),
+    t: Number(item.t ?? 0),
+    hu: Number(item.hu ?? 0),
+    ws: Number(item.ws ?? 0),
+    wd: convertWindDirection(item.wd_to),
+    icon: item.image || "",
+  }));
+
   cache = {
-    // =====================================
-    // INFORMASI LOKASI
-    // =====================================
     location: lokasi.desa || "Pusuk Sembalun",
     district: lokasi.kecamatan || "Sembalun",
     regency: lokasi.kotkab || "Lombok Timur",
     province: lokasi.provinsi || "Nusa Tenggara Barat",
 
-    // =====================================
-    // DATA CUACA
-    // =====================================
-    weather: convertWeatherDescription(prakiraan.weather_desc),
+    current: {
+      weather: convertWeatherDescription(current.weather_desc),
+      temperature: Number(current.t ?? 0),
+      humidity: Number(current.hu ?? 0),
+      windSpeed: Number(current.ws ?? 0),
+      windDirection: convertWindDirection(current.wd_to),
+      localTime: current.local_datetime,
+      icon: current.image || "",
+    },
 
-    temperature: Number(prakiraan.t ?? 0),
-    humidity: Number(prakiraan.hu ?? 0),
-    windSpeed: Number(prakiraan.ws ?? 0),
-
-    // Arah angin tanpa singkatan
-    windDirection: convertWindDirection(prakiraan.wd_to),
-
-    localTime: prakiraan.local_datetime,
-    icon: prakiraan.image || "",
+    forecast24h,
   };
 
   cacheTime = Date.now();
 
-  console.log("✅ BMKG berhasil diperbarui:", cache.weather);
+  console.log(
+    `✅ BMKG berhasil diperbarui (${forecast24h.length} prakiraan / 24 jam)`
+  );
 
   return cache;
 }

@@ -108,6 +108,22 @@ function WeatherIcon({ weather }) {
 }
 
 // ======================================================
+// EMOJI PRAKIRAAN 24 JAM
+// ======================================================
+const weatherEmoji = (weather) => {
+  const condition = (weather || "").toLowerCase();
+
+  if (condition.includes("cerah berawan")) return "🌤️";
+  if (condition.includes("cerah")) return "☀️";
+  if (condition.includes("kabut")) return "🌫️";
+  if (condition.includes("petir")) return "⛈️";
+  if (condition.includes("hujan")) return "🌧️";
+  if (condition.includes("berawan")) return "☁️";
+
+  return "☁️";
+};
+
+// ======================================================
 // ITEM INFORMASI
 // ======================================================
 function InfoItem({ icon, label, value, color }) {
@@ -161,10 +177,7 @@ export default function WeatherBMKGCard() {
 
           <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
             {Array.from({ length: 4 }).map((_, index) => (
-              <div
-                key={index}
-                className="h-20 rounded-2xl bg-white/10"
-              />
+              <div key={index} className="h-20 rounded-2xl bg-white/10" />
             ))}
           </div>
         </div>
@@ -177,6 +190,11 @@ export default function WeatherBMKGCard() {
   const windSpeed = weather?.windSpeed ?? "--";
   const windDirection = weather?.windDirection;
   const condition = weather?.weather ?? "Tidak tersedia";
+
+  // ======================================================
+  // PRAKIRAAN BMKG 24 JAM (DATA API BMKG)
+  // ======================================================
+  const forecast24h = weather?.forecast24h || [];
 
   return (
     <motion.div
@@ -202,7 +220,6 @@ export default function WeatherBMKGCard() {
       <div className="pointer-events-none absolute bottom-0 right-0 h-72 w-72 rounded-full bg-green-400/10 blur-[120px]" />
 
       <div className="relative z-10">
-
         {/* ================= HEADER ================= */}
         <div className="flex items-start justify-between gap-4">
           <div>
@@ -230,7 +247,6 @@ export default function WeatherBMKGCard() {
             </p>
           </div>
 
-          {/* Icon Cuaca (HANYA SATU) */}
           <div
             className="
               flex h-20 w-20 items-center justify-center
@@ -246,18 +262,13 @@ export default function WeatherBMKGCard() {
 
         {/* ================= SUHU ================= */}
         <div className="mt-10 flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-
-          {/* KIRI */}
           <div className="flex items-center gap-5">
-
             <h2 className="text-6xl font-bold leading-none tracking-tight text-white lg:text-7xl">
               {temperature}°
             </h2>
 
             <div>
-              <p className="text-sm text-gray-400">
-                Kondisi saat ini
-              </p>
+              <p className="text-sm text-gray-400">Kondisi saat ini</p>
 
               <p className="mt-1 text-2xl font-semibold text-white">
                 {condition}
@@ -269,7 +280,6 @@ export default function WeatherBMKGCard() {
             </div>
           </div>
 
-          {/* KANAN */}
           <a
             href="https://www.bmkg.go.id/cuaca/prakiraan-cuaca.bmkg"
             target="_blank"
@@ -294,7 +304,6 @@ export default function WeatherBMKGCard() {
 
         {/* ================= GRID INFO ================= */}
         <div className="mt-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
-
           <InfoItem
             label="Suhu"
             value={`${temperature}°C`}
@@ -322,7 +331,79 @@ export default function WeatherBMKGCard() {
             color="bg-violet-500/10 text-violet-400 border border-violet-500/20"
             icon={<Navigation size={20} />}
           />
+        </div>
 
+        {/* ================= PRAKIRAAN CUACA 24 JAM ================= */}
+        <div className="mt-8 border-t border-white/10 pt-6">
+          <div className="mb-5 flex items-center justify-between">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-400">
+                BMKG • PRAKIRAAN CUACA 24 JAM
+              </p>
+
+              <h4 className="mt-1 text-lg font-semibold text-white">
+                Prakiraan Cuaca Pusuk Sembalun
+              </h4>
+            </div>
+
+            <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-[11px] font-medium text-emerald-300">
+              24 Jam
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
+            {forecast24h.length > 0 ? (
+              forecast24h.map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 15 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.05, duration: 0.25 }}
+                  className="
+                    rounded-2xl
+                    border border-white/10
+                    bg-white/[0.04]
+                    p-3
+                    text-center
+                    backdrop-blur-xl
+                    transition-all duration-300
+                    hover:border-emerald-500/30
+                    hover:bg-emerald-500/[0.08]
+                    hover:-translate-y-1
+                  "
+                >
+                  <p className="text-[11px] font-medium text-gray-400">
+                    {item.time}
+                  </p>
+
+                  <div className="my-2 text-3xl">
+                    {weatherEmoji(item.weather)}
+                  </div>
+
+                  <p className="min-h-[34px] text-[11px] font-medium leading-4 text-white">
+                    {item.weather}
+                  </p>
+
+                  <p className="mt-2 text-sm font-semibold text-emerald-300">
+                    {item.temp}°C
+                  </p>
+
+                  <p className="mt-1 text-[10px] text-sky-300">
+                    💧 {item.humidity}%
+                  </p>
+                </motion.div>
+              ))
+            ) : (
+              <div className="col-span-full rounded-2xl border border-white/10 bg-white/5 py-8 text-center text-sm text-gray-400">
+                Prakiraan cuaca BMKG belum tersedia.
+              </div>
+            )}
+          </div>
+
+          <p className="mt-5 text-center text-xs text-gray-500">
+            Prakiraan cuaca BMKG untuk 24 jam ke depan di wilayah Pusuk Sembalun.
+          </p>
         </div>
 
         {/* ================= ERROR ================= */}

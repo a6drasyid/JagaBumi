@@ -194,7 +194,36 @@ export default function WeatherBMKGCard() {
   // ======================================================
   // PRAKIRAAN BMKG 24 JAM (DATA API BMKG)
   // ======================================================
-  const forecast24h = weather?.forecast24h || [];
+// ======================================================
+// UBAH DATA BMKG MENJADI 24 JAM (PER JAM)
+// ======================================================
+const forecast24h = (() => {
+  const data = weather?.forecast24h || [];
+  const hourly = [];
+
+  data.forEach((item) => {
+    // item.time format "08.00"
+    const [hour] = String(item.time || "00.00")
+      .split(".")
+      .map(Number);
+
+    for (let i = 0; i < 3; i++) {
+      const nextHour = (hour + i) % 24;
+
+      hourly.push({
+        time: `${String(nextHour).padStart(2, "0")}.00`,
+        weather: item.weather,
+        temp: item.temp,
+        humidity: item.humidity,
+        windSpeed: item.windSpeed,
+        windDirection: item.windDirection,
+      });
+    }
+  });
+
+  // Selalu tampilkan maksimal 24 jam
+  return hourly.slice(0, 24);
+})();
 
   return (
     <motion.div
@@ -333,78 +362,98 @@ export default function WeatherBMKGCard() {
           />
         </div>
 
-        {/* ================= PRAKIRAAN CUACA 24 JAM ================= */}
-        <div className="mt-8 border-t border-white/10 pt-6">
-          <div className="mb-5 flex items-center justify-between">
-            <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-400">
-                BMKG • PRAKIRAAN CUACA 24 JAM
-              </p>
+{/* ================= PRAKIRAAN CUACA 24 JAM ================= */}
+<div className="mt-8 border-t border-white/10 pt-6">
+  <div className="mb-5 flex items-center justify-between">
+    <div>
+      <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-400">
+        BMKG • PRAKIRAAN CUACA 24 JAM
+      </p>
 
-              <h4 className="mt-1 text-lg font-semibold text-white">
-                Prakiraan Cuaca Pusuk Sembalun
-              </h4>
-            </div>
+      <h4 className="mt-1 text-lg font-semibold text-white">
+        Prakiraan Cuaca Per Jam
+      </h4>
 
-            <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-[11px] font-medium text-emerald-300">
-              24 Jam
-            </span>
-          </div>
+      <p className="mt-1 text-xs text-gray-500">
+        Geser ke kanan untuk melihat prakiraan 24 jam berikutnya.
+      </p>
+    </div>
 
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
-            {forecast24h.length > 0 ? (
-              forecast24h.map((item, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 15 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.05, duration: 0.25 }}
-                  className="
-                    rounded-2xl
-                    border border-white/10
-                    bg-white/[0.04]
-                    p-3
-                    text-center
-                    backdrop-blur-xl
-                    transition-all duration-300
-                    hover:border-emerald-500/30
-                    hover:bg-emerald-500/[0.08]
-                    hover:-translate-y-1
-                  "
-                >
-                  <p className="text-[11px] font-medium text-gray-400">
-                    {item.time}
-                  </p>
+    <span className="rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-[11px] font-medium text-emerald-300">
+      24 Jam
+    </span>
+  </div>
 
-                  <div className="my-2 text-3xl">
-                    {weatherEmoji(item.weather)}
-                  </div>
+  {/* Horizontal Scroll */}
+  <div
+    className="
+      weather-scroll flex gap-3 pb-4 snap-x snap-mandatory
+    "
+  >
+    {forecast24h.map((item, index) => (
+      <motion.div
+        key={index}
+        initial={{ opacity: 0, x: 20 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: index * 0.015 }}
+        className="
+          snap-start
+          shrink-0
 
-                  <p className="min-h-[34px] text-[11px] font-medium leading-4 text-white">
-                    {item.weather}
-                  </p>
+          w-[108px]
+          rounded-2xl
+          border border-white/10
+          bg-white/[0.05]
+          backdrop-blur-xl
 
-                  <p className="mt-2 text-sm font-semibold text-emerald-300">
-                    {item.temp}°C
-                  </p>
+          p-3
+          text-center
 
-                  <p className="mt-1 text-[10px] text-sky-300">
-                    💧 {item.humidity}%
-                  </p>
-                </motion.div>
-              ))
-            ) : (
-              <div className="col-span-full rounded-2xl border border-white/10 bg-white/5 py-8 text-center text-sm text-gray-400">
-                Prakiraan cuaca BMKG belum tersedia.
-              </div>
-            )}
-          </div>
+          transition-all duration-300
+          hover:border-emerald-400/30
+          hover:bg-emerald-500/[0.06]
+        "
+      >
+        {/* Jam */}
+        <p className="text-[11px] font-medium text-gray-400">
+          {item.time}
+        </p>
 
-          <p className="mt-5 text-center text-xs text-gray-500">
-            Prakiraan cuaca BMKG untuk 24 jam ke depan di wilayah Pusuk Sembalun.
-          </p>
+        {/* Icon */}
+        <div className="my-3 text-[32px]">
+          {weatherEmoji(item.weather)}
         </div>
+
+        {/* Kondisi */}
+        <p className="min-h-[30px] text-[11px] font-medium leading-4 text-white">
+          {item.weather}
+        </p>
+
+        {/* Suhu */}
+        <p className="mt-3 text-lg font-bold text-emerald-300">
+          {item.temp}°
+        </p>
+
+        {/* Kelembapan */}
+        <div className="mt-2 flex items-center justify-center gap-1 text-[10px] text-sky-300">
+          <Droplets size={11} />
+          <span>{item.humidity}%</span>
+        </div>
+
+        {/* Angin */}
+        <div className="mt-1 flex items-center justify-center gap-1 text-[10px] text-gray-400">
+          <Wind size={11} />
+          <span>{item.windSpeed}</span>
+        </div>
+      </motion.div>
+    ))}
+  </div>
+
+  <p className="mt-3 text-center text-xs text-gray-500">
+    Prakiraan cuaca BMKG untuk 24 jam ke depan di wilayah Sembalun, Lombok Timur.
+  </p>
+</div>
 
         {/* ================= ERROR ================= */}
         {error && (

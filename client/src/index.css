@@ -398,3 +398,38 @@ video {
     transform: rotate(360deg);
   }
 }
+/* =====================================================
+   BMKG Weather Scrollbar
+===================================================== */
+
+.weather-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+}
+
+/* Chrome / Edge */
+.weather-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.weather-scroll::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+}
+
+/* Sebelum disentuh = abu-abu */
+.weather-scroll::-webkit-scrollbar-thumb {
+  background: #5b616d !important;
+  border-radius: 999px;
+}
+
+/* Saat cursor tepat di atas thumb */
+.weather-scroll::-webkit-scrollbar-thumb:hover {
+  background: #34d399 !important; /* emerald-400 */
+}
+
+/* Saat sedang ditekan / drag */
+.weather-scroll::-webkit-scrollbar-thumb:active {
+  background: #6ee7b7 !important; /* emerald-300 */
+}

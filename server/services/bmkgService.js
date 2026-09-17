@@ -102,18 +102,24 @@ async function getBMKGWeather() {
   // ============================================
   const current = cuacaHariIni[0];
 
-  // ============================================
-  // PRAKIRAAN 24 JAM (8 interval × 3 jam)
-  // ============================================
-  const forecast24h = cuacaHariIni.slice(0, 8).map((item) => ({
-    local_datetime: item.local_datetime,
-    weather_desc: convertWeatherDescription(item.weather_desc),
-    t: Number(item.t ?? 0),
-    hu: Number(item.hu ?? 0),
-    ws: Number(item.ws ?? 0),
-    wd: convertWindDirection(item.wd_to),
-    icon: item.image || "",
-  }));
+ // ============================================
+// PRAKIRAAN 24 JAM (SELALU 8 CARD)
+// Jika hari ini kurang dari 8 interval,
+// lanjutkan mengambil dari hari berikutnya.
+// ============================================
+const cuacaBesok = json.data[0].cuaca[1] || [];
+
+const semuaPrakiraan = [...cuacaHariIni, ...cuacaBesok];
+
+const forecast24h = semuaPrakiraan.slice(0, 8).map((item) => ({
+  local_datetime: item.local_datetime,
+  weather_desc: convertWeatherDescription(item.weather_desc),
+  t: Number(item.t ?? 0),
+  hu: Number(item.hu ?? 0),
+  ws: Number(item.ws ?? 0),
+  wd: convertWindDirection(item.wd_to),
+  icon: item.image || "",
+}));
 
   cache = {
     location: lokasi.desa || "Pusuk Sembalun",
